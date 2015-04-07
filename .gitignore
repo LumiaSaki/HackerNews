@@ -1,14 +1,12 @@
 
-*.xccheckout
-
-*.xcsettings
-
 *.xcconfig
-
-Hacker News/Hacker News.xcodeproj/xcuserdata/Lumia_Saki.xcuserdatad/xcschemes/xcschememanagement.plist
 
 *.xcscheme
 
 *.xcbkptlist
 
-Hacker News/Hacker News.xcworkspace/xcuserdata/Lumia_Saki.xcuserdatad/UserInterfaceState.xcuserstate
+*.xcsettings
+
+*.xcuserstate
+
+*.xcuserstate
