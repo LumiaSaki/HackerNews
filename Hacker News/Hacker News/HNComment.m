@@ -10,7 +10,7 @@
 
 @implementation HNComment
 
-- (instancetype)initWithAuthor:(NSString *)author commentId:(NSUInteger)commentId subComments:(NSArray *)subComments parent:(NSUInteger)parent contentText:(NSString *)contentText time:(NSDate *)time type:(NSString *)type {
+- (instancetype)initWithAuthor:(NSString *)author commentId:(NSUInteger)commentId subComments:(NSArray *)subComments parent:(NSUInteger)parent contentText:(NSString *)contentText time:(NSDate *)time type:(NSString *)type depth:(NSUInteger)depth {
     self = [super init];
     if (self) {
         _author = author;
@@ -20,6 +20,7 @@
         _contentText = contentText;
         _time = time;
         _type = type;
+        _depth = depth;
     }
     return self;
 }

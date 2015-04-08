@@ -7,8 +7,19 @@
 //
 
 #import "HNTopStoryViewController.h"
+#import "HNLoadController.h"
+#import "HNTopStoryTableViewCell.h"
+
+static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
 
 @interface HNTopStoryViewController ()
+
+@property (weak, nonatomic) IBOutlet UITableView *topStoriesTableView;
+
+@property (nonatomic, strong) HNLoadController *loadController;
+@property (nonatomic, strong) NSMutableArray *topStories;
+@property (nonatomic) NSUInteger currentTopStoryIndex;
+@property (nonatomic, strong) UIRefreshControl *refreshControl;
 
 @end
 
@@ -17,11 +28,85 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    _topStories = [NSMutableArray new];
+    
+    _refreshControl = [[UIRefreshControl alloc] init];
+    [_refreshControl addTarget:self action:@selector(refreshData) forControlEvents:UIControlEventValueChanged];
+    [_topStoriesTableView addSubview:_refreshControl];
+    
+    [_topStoriesTableView registerNib:[UINib nibWithNibName:@"HNTopStoryTableViewCell" bundle:nil] forCellReuseIdentifier:TOP_STORY_CELL_IDENTIFIER];
+    
+    _currentTopStoryIndex = 0;
+
+    _loadController = [HNLoadController sharedLoadController];
+    
+//    [self loadMore:10];
+//    [self refreshData];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+- (void)loadMore:(NSUInteger)moreStoriesCount {
+    //从网络读取
+    [_loadController loadTopStoriesFromIndex:_currentTopStoryIndex toIndex:_currentTopStoryIndex + moreStoriesCount - 1 completionHandler:^(NSArray *topStories) {
+        [_topStories addObjectsFromArray:topStories];
+        
+        _currentTopStoryIndex += moreStoriesCount;
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_topStoriesTableView reloadData];
+        });
+    }];
+    
+    //从本地读取
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [_topStories count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    HNTopStoryTableViewCell *topStoryCell = [tableView dequeueReusableCellWithIdentifier:TOP_STORY_CELL_IDENTIFIER forIndexPath:indexPath];
+    
+    if (indexPath.row == [_topStories count] - 1) {
+        [self loadMore:10];
+    }
+    
+    HNStory *story = _topStories[indexPath.row];
+    
+    topStoryCell.titleLabel.text = story.title;
+    topStoryCell.authorLabel.text = story.author;
+    topStoryCell.clickCountLabel.text = [NSString stringWithFormat:@"clicked:%lu", (unsigned long)story.score];
+    topStoryCell.commentCountLabel.text = [NSString stringWithFormat:@"comments:%lu", (unsigned long)[story.comments count]];
+    
+    return topStoryCell;
+}
+
+- (void)refreshData {
+    [self refreshDataByCount:10];
+}
+
+- (void)refreshDataByCount:(NSUInteger)storiesCount {
+    _currentTopStoryIndex = 0;
+    [_loadController loadTopStoriesFromIndex:_currentTopStoryIndex toIndex:storiesCount - 1 completionHandler:^(NSArray *topStories) {
+        _topStories = [[NSMutableArray alloc] initWithArray:topStories];
+        
+        _currentTopStoryIndex = storiesCount;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_topStoriesTableView reloadData];
+            
+            [_refreshControl endRefreshing];
+        });
+    }];
+}
+
+
 
 @end

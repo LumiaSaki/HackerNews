@@ -9,16 +9,15 @@
 #import <Foundation/Foundation.h>
 #import "HNStory.h"
 #import "HNUser.h"
+#import "HNComment.h"
 
 @interface HNLoadController : NSObject
 
 + (instancetype)sharedLoadController;
 
-- (void)loadTopStories:(void(^)(NSArray *stories, BOOL success))completionHandler;  //stories<HNStory>
-- (void)loadStoryById:(NSUInteger)storyId completionHandler:(void(^)(HNStory *story, BOOL success))completionHandler;   
-
-////TODO:concern...
-//- (void)loadCommentsById:(NSUInteger)commentId completionHandler:(void(^)(NSArray *comments, BOOL success))completionHandler;    //comments<HNComment>
-- (void)loadUserById:(NSString *)userId completionHandler:(void(^)(HNUser *user, BOOL success))completionHandler;
+- (void)loadTopStoriesFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex completionHandler:(void (^)(NSArray *topStories))completionHandler;
+- (void)loadStoryById:(NSUInteger)storyId completionHandler:(void(^)(HNStory *story))completionHandler;
+- (void)loadUserById:(NSString *)userId completionHandler:(void(^)(HNUser *user))completionHandler;
+- (void)loadAllCommentsUnderStoryId:(NSUInteger)storyId completionHandler:(void (^)(NSArray *comments))completionHandler;
 
 @end

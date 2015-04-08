@@ -2,9 +2,10 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1514" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="2Sh-pi-eKf">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--Top Story View Controller-->
+        <!--Hacker News-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
                 <viewController id="vXZ-lx-hvc" customClass="HNTopStoryViewController" sceneMemberID="viewController">
@@ -16,27 +17,34 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="5iM-qs-ekO">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="120" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="5iM-qs-ekO">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="vXZ-lx-hvc" id="Jki-iL-aVI"/>
+                                </connections>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="5iM-qs-ekO" firstAttribute="bottom" secondItem="2fi-mo-0CV" secondAttribute="top" id="2sj-D8-2RT"/>
-                            <constraint firstAttribute="trailing" secondItem="5iM-qs-ekO" secondAttribute="trailing" id="7JU-jK-x8r"/>
-                            <constraint firstItem="5iM-qs-ekO" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="PWB-hi-Pxl"/>
-                            <constraint firstItem="5iM-qs-ekO" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="SJX-tF-kRS"/>
+                            <constraint firstItem="5iM-qs-ekO" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="topMargin" constant="64" id="Esy-xl-99D">
+                                <variation key="widthClass=compact" constant="0.0"/>
+                            </constraint>
+                            <constraint firstItem="5iM-qs-ekO" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="QHT-B3-1Jl"/>
+                            <constraint firstItem="5iM-qs-ekO" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="WKf-YS-zvz"/>
+                            <constraint firstAttribute="trailing" secondItem="5iM-qs-ekO" secondAttribute="trailing" id="b1c-li-1iU"/>
+                            <constraint firstItem="5iM-qs-ekO" firstAttribute="bottom" secondItem="2fi-mo-0CV" secondAttribute="top" id="vbb-iV-XBt"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="5iM-qs-ekO"/>
                             </mask>
                             <mask key="constraints">
-                                <exclude reference="2sj-D8-2RT"/>
-                                <exclude reference="7JU-jK-x8r"/>
-                                <exclude reference="PWB-hi-Pxl"/>
-                                <exclude reference="SJX-tF-kRS"/>
+                                <exclude reference="Esy-xl-99D"/>
+                                <exclude reference="QHT-B3-1Jl"/>
+                                <exclude reference="WKf-YS-zvz"/>
+                                <exclude reference="b1c-li-1iU"/>
+                                <exclude reference="vbb-iV-XBt"/>
                             </mask>
                         </variation>
                         <variation key="widthClass=compact">
@@ -44,14 +52,18 @@
                                 <include reference="5iM-qs-ekO"/>
                             </mask>
                             <mask key="constraints">
-                                <include reference="2sj-D8-2RT"/>
-                                <include reference="7JU-jK-x8r"/>
-                                <include reference="PWB-hi-Pxl"/>
-                                <include reference="SJX-tF-kRS"/>
+                                <include reference="Esy-xl-99D"/>
+                                <include reference="QHT-B3-1Jl"/>
+                                <exclude reference="WKf-YS-zvz"/>
+                                <include reference="b1c-li-1iU"/>
+                                <include reference="vbb-iV-XBt"/>
                             </mask>
                         </variation>
                     </view>
-                    <navigationItem key="navigationItem" id="b7l-Sv-brf"/>
+                    <navigationItem key="navigationItem" title="Hacker News" id="b7l-Sv-brf"/>
+                    <connections>
+                        <outlet property="topStoriesTableView" destination="5iM-qs-ekO" id="IJI-Fp-9xU"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>

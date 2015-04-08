@@ -9,5 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface HNTopStoryTableViewCell : UITableViewCell
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *authorLabel;
+@property (weak, nonatomic) IBOutlet UILabel *clickCountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *commentCountLabel;
 
 @end
