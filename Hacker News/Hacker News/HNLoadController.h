@@ -14,6 +14,7 @@
 @interface HNLoadController : NSObject
 
 + (instancetype)sharedLoadController;
++ (void)resetCount;
 
 - (void)loadTopStoriesFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex completionHandler:(void (^)(NSArray *topStories))completionHandler;
 - (void)loadStoryById:(NSUInteger)storyId completionHandler:(void(^)(HNStory *story))completionHandler;

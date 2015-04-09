@@ -15,6 +15,8 @@ static NSString *USER_URL_PREFIX = @"https://hacker-news.firebaseio.com/v0/user/
 
 static NSString *URL_SUFFIX = @".json?print=pretty";
 
+static NSUInteger count = 0;
+
 @implementation HNLoadController
 
 + (instancetype)sharedLoadController {
@@ -123,9 +125,9 @@ static NSString *URL_SUFFIX = @".json?print=pretty";
     [self loadStoryById:storyId completionHandler:^(HNStory *story) {
         NSMutableArray *comments = [NSMutableArray new];
         
-        [self loadCommentsFromCommentsIdArray:story.comments toArray:comments depth:0];
-        
-        completionHandler(comments);
+        [self loadCommentsFromCommentsIdArray:story.comments toArray:comments depth:0 completionHandler:^(NSArray *comments) {
+            completionHandler(comments);
+        }];
     }];
 }
 
@@ -173,18 +175,24 @@ static NSString *URL_SUFFIX = @".json?print=pretty";
 }
 
 //TODO:Wait for debugging. may be some errors in it.
-- (void)loadCommentsFromCommentsIdArray:(NSArray *)commentsIdArray toArray:(NSMutableArray *)array depth:(NSUInteger)depth {
+- (void)loadCommentsFromCommentsIdArray:(NSArray *)commentsIdArray toArray:(NSMutableArray *)array depth:(NSUInteger)depth completionHandler:(void(^)(NSArray *comments))completionHandler {
+    
     for (NSNumber *commentId in commentsIdArray) {
-        [self loadCommentById:[commentId unsignedIntegerValue] completionHandler:^(HNComment *comment) {
-            if (comment != nil) {
-                comment.depth = depth;
-                [array addObject:comment];
-                
-                if ([comment.subComments count] != 0) {
-                    [self loadCommentsFromCommentsIdArray:comment.subComments toArray:array depth:depth + 1];
+        count ++;
+            [self loadCommentById:[commentId unsignedIntegerValue] completionHandler:^(HNComment *comment) {
+                if (comment != nil) {
+                    comment.depth = depth;
+                    [array addObject:comment];
+                    
+                    if ([comment.subComments count] != 0) {
+                        [self loadCommentsFromCommentsIdArray:comment.subComments toArray:array depth:depth + 1 completionHandler:completionHandler];
+                    }
+                    count --;
                 }
-            }
-        }];
+                if (count == 0) {
+                    completionHandler(array);
+                }
+            }];
     }
 }
 

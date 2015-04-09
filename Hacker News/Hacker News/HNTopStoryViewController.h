@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface HNTopStoryViewController : UIViewController<UITableViewDataSource>
+@interface HNTopStoryViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
 
 @end
 

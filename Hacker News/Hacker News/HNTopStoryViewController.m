@@ -9,6 +9,7 @@
 #import "HNTopStoryViewController.h"
 #import "HNLoadController.h"
 #import "HNTopStoryTableViewCell.h"
+#import "HNCommentViewController.h"
 
 static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
 
@@ -38,9 +39,9 @@ static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
     
     _currentTopStoryIndex = 0;
 
-    _loadController = [HNLoadController sharedLoadController];
     
-//    [self loadMore:10];
+//    _loadController = [HNLoadController sharedLoadController];
+    
 //    [self refreshData];
 }
 
@@ -51,6 +52,9 @@ static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
 
 - (void)loadMore:(NSUInteger)moreStoriesCount {
     //从网络读取
+    if (_loadController == nil) {
+        _loadController = [HNLoadController sharedLoadController];
+    }
     [_loadController loadTopStoriesFromIndex:_currentTopStoryIndex toIndex:_currentTopStoryIndex + moreStoriesCount - 1 completionHandler:^(NSArray *topStories) {
         [_topStories addObjectsFromArray:topStories];
         
@@ -89,12 +93,26 @@ static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
     return topStoryCell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    HNStory *story = _topStories[indexPath.row];
+    
+    HNCommentViewController *commentVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentViewController"];
+    
+    commentVC.storyId = story.storyId;
+    
+    [self.navigationController pushViewController:commentVC animated:YES];
+}
+
 - (void)refreshData {
     [self refreshDataByCount:10];
 }
 
 - (void)refreshDataByCount:(NSUInteger)storiesCount {
     _currentTopStoryIndex = 0;
+    
+    if (_loadController == nil) {
+        _loadController = [HNLoadController sharedLoadController];
+    }
     [_loadController loadTopStoriesFromIndex:_currentTopStoryIndex toIndex:storiesCount - 1 completionHandler:^(NSArray *topStories) {
         _topStories = [[NSMutableArray alloc] initWithArray:topStories];
         
