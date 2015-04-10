@@ -98,7 +98,8 @@ static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
     
     HNCommentViewController *commentVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentViewController"];
     
-    commentVC.storyId = story.storyId;
+    commentVC.story = story;
+//    commentVC.storyId = story.storyId;
     
     [self.navigationController pushViewController:commentVC animated:YES];
 }

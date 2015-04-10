@@ -14,7 +14,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xTT-dW-y0P">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xTT-dW-y0P">
                         <rect key="frame" x="7" y="36" width="307" height="144"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -54,7 +54,10 @@
                     <mask key="constraints">
                         <exclude reference="HQH-ND-CQD"/>
                         <exclude reference="xHg-74-bXr"/>
+                        <exclude reference="3OZ-2s-kR5"/>
+                        <exclude reference="KLF-wd-iMk"/>
                         <exclude reference="VkU-ee-wkX"/>
+                        <exclude reference="sQv-XR-Wrj"/>
                     </mask>
                 </variation>
             </tableViewCellContentView>

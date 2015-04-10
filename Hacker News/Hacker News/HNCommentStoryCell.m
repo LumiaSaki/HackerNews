@@ -19,5 +19,8 @@
 
     // Configure the view for the selected state
 }
+- (IBAction)sourceButtonPressed:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"StorySourceButtonPressed" object:self];
+}
 
 @end

@@ -10,4 +10,6 @@
 
 @interface HNCommentStoryCell : UITableViewCell
 
+@property (weak, nonatomic) IBOutlet UILabel *storyTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *storyAuthorLabel;
 @end

@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7531" systemVersion="14D131" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="2Sh-pi-eKf">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -70,10 +71,10 @@
             </objects>
             <point key="canvasLocation" x="-615" y="-57"/>
         </scene>
-        <!--Comment View Controller-->
+        <!--Comments-->
         <scene sceneID="T2A-Og-FWy">
             <objects>
-                <viewController storyboardIdentifier="CommentViewController" id="vZU-kn-xrR" customClass="HNCommentViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CommentViewController" title="Comments" id="vZU-kn-xrR" customClass="HNCommentViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="8fu-55-nLp"/>
                         <viewControllerLayoutGuide type="bottom" id="AuK-2w-0Lj"/>
@@ -93,10 +94,10 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="3eY-T3-rpp" secondAttribute="trailing" id="0Vd-Gf-MWT"/>
-                            <constraint firstItem="3eY-T3-rpp" firstAttribute="top" secondItem="A0Z-Yh-bPX" secondAttribute="topMargin" constant="64" id="IUU-82-9fH"/>
                             <constraint firstItem="3eY-T3-rpp" firstAttribute="top" secondItem="A0Z-Yh-bPX" secondAttribute="topMargin" id="IZn-3H-f78"/>
                             <constraint firstItem="3eY-T3-rpp" firstAttribute="bottom" secondItem="AuK-2w-0Lj" secondAttribute="top" id="MFE-eg-eEd"/>
                             <constraint firstItem="3eY-T3-rpp" firstAttribute="leading" secondItem="A0Z-Yh-bPX" secondAttribute="leading" id="jpM-4i-aap"/>
+                            <constraint firstItem="3eY-T3-rpp" firstAttribute="top" secondItem="A0Z-Yh-bPX" secondAttribute="topMargin" id="mri-AZ-blI"/>
                             <constraint firstItem="3eY-T3-rpp" firstAttribute="top" secondItem="8fu-55-nLp" secondAttribute="bottom" id="vFj-bO-TcB">
                                 <variation key="widthClass=compact" constant="64"/>
                             </constraint>
@@ -107,10 +108,10 @@
                             </mask>
                             <mask key="constraints">
                                 <exclude reference="0Vd-Gf-MWT"/>
-                                <exclude reference="IUU-82-9fH"/>
                                 <exclude reference="IZn-3H-f78"/>
                                 <exclude reference="MFE-eg-eEd"/>
                                 <exclude reference="jpM-4i-aap"/>
+                                <exclude reference="mri-AZ-blI"/>
                                 <exclude reference="vFj-bO-TcB"/>
                             </mask>
                         </variation>
@@ -120,10 +121,10 @@
                             </mask>
                             <mask key="constraints">
                                 <include reference="0Vd-Gf-MWT"/>
-                                <include reference="IUU-82-9fH"/>
                                 <exclude reference="IZn-3H-f78"/>
                                 <include reference="MFE-eg-eEd"/>
                                 <include reference="jpM-4i-aap"/>
+                                <include reference="mri-AZ-blI"/>
                                 <exclude reference="vFj-bO-TcB"/>
                             </mask>
                         </variation>
@@ -139,15 +140,56 @@
         <!--Story Detail View Controller-->
         <scene sceneID="vNW-oW-S3a">
             <objects>
-                <viewController id="UHV-KU-ZfQ" customClass="HNStoryDetailViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="StoryDetailViewController" id="UHV-KU-ZfQ" customClass="HNStoryDetailViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="NXp-IO-enC"/>
                         <viewControllerLayoutGuide type="bottom" id="Nwx-zG-WEO"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="abg-57-crA">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gIy-43-er4">
+                                <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <outlet property="delegate" destination="UHV-KU-ZfQ" id="ViF-cQ-JJ5"/>
+                                </connections>
+                            </webView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="gIy-43-er4" firstAttribute="leading" secondItem="abg-57-crA" secondAttribute="leadingMargin" constant="-16" id="86Z-y6-j9T"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="gIy-43-er4" secondAttribute="trailing" constant="-16" id="Q2q-WZ-XBp"/>
+                            <constraint firstItem="gIy-43-er4" firstAttribute="top" secondItem="abg-57-crA" secondAttribute="topMargin" id="S6c-wF-ccQ"/>
+                            <constraint firstItem="Nwx-zG-WEO" firstAttribute="top" secondItem="gIy-43-er4" secondAttribute="bottom" id="pba-iH-YOx"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="gIy-43-er4"/>
+                            </mask>
+                            <mask key="constraints">
+                                <exclude reference="86Z-y6-j9T"/>
+                                <exclude reference="Q2q-WZ-XBp"/>
+                                <exclude reference="S6c-wF-ccQ"/>
+                                <exclude reference="pba-iH-YOx"/>
+                            </mask>
+                        </variation>
+                        <variation key="widthClass=compact">
+                            <mask key="subviews">
+                                <include reference="gIy-43-er4"/>
+                            </mask>
+                            <mask key="constraints">
+                                <include reference="86Z-y6-j9T"/>
+                                <include reference="Q2q-WZ-XBp"/>
+                                <include reference="S6c-wF-ccQ"/>
+                                <include reference="pba-iH-YOx"/>
+                            </mask>
+                        </variation>
                     </view>
+                    <connections>
+                        <outlet property="storyDetailWebView" destination="gIy-43-er4" id="OI8-Z9-C95"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qFD-jq-Qb1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

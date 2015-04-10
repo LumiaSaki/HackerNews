@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HNLoadController.h"
 
-@interface HNStoryDetailViewController : UIViewController
+@interface HNStoryDetailViewController : UIViewController<UIWebViewDelegate>
+
+@property (nonatomic, strong) HNStory *story;
 
 @end

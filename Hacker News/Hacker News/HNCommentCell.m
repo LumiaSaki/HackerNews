@@ -23,7 +23,6 @@
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-//        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-2-[commentLabel]-|" options:0 metrics:nil views:@{ @"commentLabel": _commentLabel }]];
 
     }
     return self;
@@ -31,6 +30,8 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
+    
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[authorLabel]-8-[commentLabel]-8-|" options:0 metrics:nil views:@{ @"commentLabel": self.commentLabel , @"authorLabel" : self.authorLabel}]];
     
     // Make sure the contentView does a layout pass here so that its subviews have their frames set, which we
     // need to use to set the preferredMaxLayoutWidth below.

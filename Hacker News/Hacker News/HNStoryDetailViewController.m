@@ -8,8 +8,14 @@
 
 #import "HNStoryDetailViewController.h"
 #import "HNLoadController.h"
+#import "HNStoryDetailLoadIndicatorBarButtonItem.h"
 
 @interface HNStoryDetailViewController ()
+
+@property (weak, nonatomic) IBOutlet UIWebView *storyDetailWebView;
+@property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
+@property (nonatomic, strong) HNStoryDetailLoadIndicatorBarButtonItem *indicatorButton;
+@property (nonatomic, strong) UIBarButtonItem *shareBarButton;
 
 @end
 
@@ -18,13 +24,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    HNLoadController *loadController = [HNLoadController sharedLoadController];
     
-    [loadController loadAllCommentsUnderStoryId:9346052 completionHandler:^(NSArray *comments) {
-        for (HNComment *comment in comments) {
-            NSLog(@"%lu, %@",(unsigned long)comment.commentId, comment.author);
-        }
-    }];
+    
+    NSURL *url = [NSURL URLWithString:_story.url];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    
+    [_storyDetailWebView loadRequest:request];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -32,14 +38,36 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+    _shareBarButton = nil;
+    
+    _indicatorButton = [HNStoryDetailLoadIndicatorBarButtonItem new];
+    
+    self.navigationItem.rightBarButtonItem = _indicatorButton;
+    
+    [_indicatorButton.indicator startAnimating];
 }
-*/
 
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    [_indicatorButton.indicator stopAnimating];
+    
+    _indicatorButton = nil;
+    
+    _shareBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(share)];
+    
+    self.navigationItem.rightBarButtonItem = _shareBarButton;
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [self.view setNeedsLayout];
+    [self.view layoutIfNeeded];
+}
+
+- (void)share {
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[_story.title, _story.url] applicationActivities:nil];
+    
+    activityVC.excludedActivityTypes = @[UIActivityTypeAirDrop];
+    
+    [self presentViewController:activityVC animated:YES completion:nil];
+}
 @end

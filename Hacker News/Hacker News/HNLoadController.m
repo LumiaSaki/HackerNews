@@ -121,11 +121,11 @@ static NSUInteger count = 0;
     }];
 }
 
-- (void)loadAllCommentsUnderStoryId:(NSUInteger)storyId completionHandler:(void (^)(NSArray *))completionHandler {
+- (void)loadAllCommentsUnderStoryId:(NSUInteger)storyId completionHandler:(void (^)(NSMutableDictionary *))completionHandler {
     [self loadStoryById:storyId completionHandler:^(HNStory *story) {
-        NSMutableArray *comments = [NSMutableArray new];
+        NSMutableDictionary *comments = [NSMutableDictionary new];
         
-        [self loadCommentsFromCommentsIdArray:story.comments toArray:comments depth:0 completionHandler:^(NSArray *comments) {
+        [self loadCommentsFromCommentsIdArray:story.comments toDict:comments depth:0 completionHandler:^(NSMutableDictionary *comments) {
             completionHandler(comments);
         }];
     }];
@@ -174,23 +174,22 @@ static NSUInteger count = 0;
     }];
 }
 
-//TODO:Wait for debugging. may be some errors in it.
-- (void)loadCommentsFromCommentsIdArray:(NSArray *)commentsIdArray toArray:(NSMutableArray *)array depth:(NSUInteger)depth completionHandler:(void(^)(NSArray *comments))completionHandler {
+- (void)loadCommentsFromCommentsIdArray:(NSArray *)commentsIdArray toDict:(NSMutableDictionary *)dict depth:(NSUInteger)depth completionHandler:(void(^)(NSMutableDictionary *commentsDict))completionHandler {
     
     for (NSNumber *commentId in commentsIdArray) {
         count ++;
             [self loadCommentById:[commentId unsignedIntegerValue] completionHandler:^(HNComment *comment) {
                 if (comment != nil) {
                     comment.depth = depth;
-                    [array addObject:comment];
+                    [dict setValue:comment forKey:[NSString stringWithFormat:@"%lu", [commentId unsignedIntegerValue]]];
                     
                     if ([comment.subComments count] != 0) {
-                        [self loadCommentsFromCommentsIdArray:comment.subComments toArray:array depth:depth + 1 completionHandler:completionHandler];
+                        [self loadCommentsFromCommentsIdArray:comment.subComments toDict:dict depth:depth + 1 completionHandler:completionHandler];
                     }
                     count --;
                 }
                 if (count == 0) {
-                    completionHandler(array);
+                    completionHandler(dict);
                 }
             }];
     }
