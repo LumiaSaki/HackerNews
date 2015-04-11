@@ -10,7 +10,7 @@
 
 @interface HNCommentCell : UITableViewCell
 
-@property (nonatomic, weak) IBOutlet UILabel *authorLabel;
+@property (nonatomic, weak) IBOutlet UIButton *authorButton;
 @property (nonatomic, weak) IBOutlet UILabel *commentLabel;
 
 @end

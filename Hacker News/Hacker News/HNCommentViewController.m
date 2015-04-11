@@ -10,6 +10,7 @@
 #import "HNCommentCell.h"
 #import "HNCommentStoryCell.h"
 #import "HNStoryDetailViewController.h"
+#import "HNUserInfoViewController.h"
 
 static NSString *COMMENT_CELL_IDENTIFIER = @"CommentCell";
 static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
@@ -20,6 +21,7 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
 
 @property (nonatomic, strong) HNLoadController *loadController;
 @property (nonatomic, strong) NSArray *comments;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *indicator;
 
 @end
 
@@ -37,21 +39,16 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
     [_commentTableView registerNib:[UINib nibWithNibName:@"HNCommentStoryCell" bundle:nil] forCellReuseIdentifier:COMMENT_STORY_IDENTIFIER];
         
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(storySourceButtonPressed) name:@"StorySourceButtonPressed" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(authorButtonPressed:) name:@"AuthorButtonInCommentPressed" object:nil];
     
-    UIActivityIndicatorView *indivitorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    
-    [_commentTableView addSubview:indivitorView];
-    
-    indivitorView.center = self.view.center;
-    
-    [indivitorView startAnimating];
+    [_indicator startAnimating];
 
     [_loadController loadAllCommentsUnderStoryId:_story.storyId completionHandler:^(NSMutableDictionary *commentsDict) {
         [self sortCommentsDict:commentsDict completionHandler:^(NSArray *sortedComments) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 _comments = sortedComments;
                 
-                [indivitorView stopAnimating];
+                [_indicator stopAnimating];
                 
                 [_commentTableView reloadData];
             });
@@ -88,7 +85,7 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
         HNCommentStoryCell *storyCommentCell = [tableView dequeueReusableCellWithIdentifier:COMMENT_STORY_IDENTIFIER forIndexPath:indexPath];
         
         storyCommentCell.storyTitleLabel.text = story.title;
-        storyCommentCell.storyAuthorLabel.text = story.author;
+        storyCommentCell.storyAuthorLabel.text = [NSString stringWithFormat:@"Author by:%@",story.author];
         
         return storyCommentCell;
         
@@ -100,15 +97,15 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
         HNComment *comment = _comments[indexPath.row];
         
         if (comment.contentText == nil) {
-            commentCell.authorLabel.text = @"[deleted]";
+            [commentCell.authorButton setTitle:@"[deleted]" forState:UIControlStateNormal];
             commentCell.commentLabel.text = @"[deleted]";
         } else {
-            commentCell.authorLabel.text = comment.author;
+            [commentCell.authorButton setTitle:comment.author forState:UIControlStateNormal];
             commentCell.commentLabel.text = comment.contentText;
             
             NSUInteger padding = (comment.depth + 1) * 20;
             
-            [commentCell.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[authorLabel]-8-[commentLabel]-8-|" options:0 metrics:nil views:@{ @"commentLabel": commentCell.commentLabel , @"authorLabel" : commentCell.authorLabel}]];
+            [commentCell.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[authorLabel]-8-[commentLabel]-8-|" options:0 metrics:nil views:@{ @"commentLabel": commentCell.commentLabel , @"authorLabel" : commentCell.authorButton}]];
             [commentCell.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-%lu-[commentLabel]-20-|",(unsigned long)padding] options:0 metrics:nil views:@{ @"commentLabel": commentCell.commentLabel}]];
             
             [commentCell.contentView setNeedsLayout];
@@ -135,7 +132,7 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
 - (void)saveSortedCommentByCommentArray:(NSArray *)commentArray toArray:(NSMutableArray *)array commentDict:(NSMutableDictionary *)commentsDict {
     
     for (NSNumber *commentId in commentArray) {
-        HNComment *comment = commentsDict[[NSString stringWithFormat:@"%lu", [commentId unsignedIntegerValue]]];
+        HNComment *comment = commentsDict[[NSString stringWithFormat:@"%lu", (unsigned long)[commentId unsignedIntegerValue]]];
         
         [array addObject:comment];
         
@@ -150,15 +147,6 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
         completionHandler(story);
     }];
 }
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 - (void)storySourceButtonPressed {
     HNStoryDetailViewController *storyDetailVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"StoryDetailViewController"];
@@ -166,7 +154,14 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
     storyDetailVC.story = _story;
     
     [self.navigationController pushViewController:storyDetailVC animated:YES];
-//    NSLog(@"%@", _story.url);
+}
+
+- (void)authorButtonPressed:(NSNotification *)notification {
+    HNUserInfoViewController *userInfoVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"UserInfoViewController"];
+    
+    userInfoVC.userId = notification.userInfo[@"userId"];
+    
+    [self.navigationController pushViewController:userInfoVC animated:YES];
 }
 
 - (void)dealloc {

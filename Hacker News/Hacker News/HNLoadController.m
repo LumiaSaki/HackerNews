@@ -30,6 +30,91 @@ static NSUInteger count = 0;
     return loadController;
 }
 
+- (void)loadStoriesByIdArray:(NSArray *)storiesIdArray fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex completionHandler:(void (^)(NSArray *stories))completionHandler {
+    if (storiesIdArray != nil) {
+        NSMutableArray *storiesArray = [NSMutableArray new];
+        
+        for (NSUInteger i = fromIndex ; i <= MIN(toIndex, [storiesIdArray count] - 1) ; i++) {
+            HNStory *story = [[HNStory alloc] initWithAuthor:nil descendants:0 storyId:[storiesIdArray[i] unsignedIntegerValue] comments:nil score:0 time:nil title:nil type:nil url:nil];
+            
+            [storiesArray addObject:story];
+        }
+        
+        __block NSInteger completionCount = 0;
+        
+        for (HNStory *aStory in storiesArray) {
+            [self loadStoryById:aStory.storyId completionHandler:^(HNStory *story) {
+                aStory.author = story.author;
+                aStory.descendants = story.descendants;
+                aStory.comments = story.comments;
+                aStory.score = story.score;
+                aStory.time = story.time;
+                aStory.title = story.title;
+                aStory.type = story.type;
+                aStory.url = story.url;
+                
+                completionCount += 1;
+                
+                if (completionCount == [storiesArray count]) {
+                    completionHandler(storiesArray);
+                }
+            }];
+        }
+    } else {
+        completionHandler(nil);
+    }
+}
+//TODO:to be finished.
+- (void)loadStorieByItemIdArray:(NSArray *)itemIdArray fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex completionHandler:(void (^)(NSMutableArray *))completionHandler {
+    NSMutableArray *itemArray = [NSMutableArray new];
+    
+    __block NSUInteger completionCount = 0;
+    __block NSUInteger itemCount= 0;
+    
+    for (NSUInteger i = fromIndex; i <= MIN(toIndex, [itemArray count] - 1); i++) {
+        NSNumber *itemId = itemIdArray[i];
+        
+        itemCount += 1;
+        
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%ld%@", ITEM_URL_PREFIX, [itemId longValue], URL_SUFFIX]];
+        
+        [self dataFromURL:url completionHandler:^(NSData *data) {
+            NSError *jsonError;
+            
+            NSDictionary *itemDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&jsonError];
+            
+            if (itemDict != nil && !jsonError) {
+//                NSLog(@"%ld", [itemId longValue]);
+                if ([itemDict[@"type"] isEqualToString:@"story"] /*&& ![itemDict[@"deleted"] isEqualToString:@"true"]*/) {
+                    
+                    HNStory *story = [[HNStory alloc] initWithAuthor:itemDict[@"by"] descendants:[itemDict[@"descendants"] unsignedIntegerValue] storyId:[itemDict[@"id"] unsignedIntegerValue] comments:itemDict[@"kids"] score:[itemDict[@"score"] unsignedIntegerValue] time:[NSDate dateWithTimeIntervalSince1970:[itemDict[@"time"] unsignedIntegerValue]] title:itemDict[@"title"] type:itemDict[@"type"] url:itemDict[@"url"]];
+                    
+                        [itemArray addObject:story];
+                        
+                        completionCount += 1;
+                        
+                        if (completionCount == itemCount) {
+                            completionHandler(itemArray);
+                        }
+                } else if ([itemDict[@"type"] isEqualToString:@"comment"] /*&& ![itemDict[@"deleted"] isEqualToString:@"true"]*/) {
+                    HNComment *comment = [[HNComment alloc] initWithAuthor:itemDict[@"by"] commentId:[itemDict[@"id"] unsignedIntegerValue] subComments:itemDict[@"kids"] parent:[itemDict[@"parent"] unsignedIntegerValue] contentText:itemDict[@"text"] time:[NSDate dateWithTimeIntervalSince1970:[itemDict[@"time"] unsignedIntegerValue]] type:itemDict[@"type"] depth:0];
+                    
+                    [itemArray addObject:comment];
+                    
+                    completionCount += 1;
+                    
+                    if (completionCount == itemCount) {
+                        completionHandler(itemArray);
+                    }
+                }
+            } else {
+                //handle json error and dict is nil.
+                completionHandler(nil);
+            }
+        }];
+    }
+}
+
 - (void)loadTopStoriesFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex completionHandler:(void (^)(NSArray *))completionHandler {
     NSURL *url = [NSURL URLWithString:TOP_STORIES_URL];
     
@@ -39,35 +124,10 @@ static NSUInteger count = 0;
             
             NSArray *topStoriesId = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&jsonError];
             
-            if (topStoriesId != nil && !jsonError) {
-                NSMutableArray *topStoriesArray = [NSMutableArray new];
-
-                for (NSUInteger i = fromIndex ; i <= MIN(toIndex, [topStoriesId count] - 1) ; i++) {
-                    HNStory *story = [[HNStory alloc] initWithAuthor:nil descendants:0 storyId:[topStoriesId[i] unsignedIntegerValue] comments:nil score:0 time:nil title:nil type:nil url:nil];
-                    
-                    [topStoriesArray addObject:story];
-                }
-                
-                __block NSInteger completionCount = 0;
-                
-                for (HNStory *aStory in topStoriesArray) {
-                    [self loadStoryById:aStory.storyId completionHandler:^(HNStory *story) {
-                        aStory.author = story.author;
-                        aStory.descendants = story.descendants;
-                        aStory.comments = story.comments;
-                        aStory.score = story.score;
-                        aStory.time = story.time;
-                        aStory.title = story.title;
-                        aStory.type = story.type;
-                        aStory.url = story.url;
-                        
-                        completionCount += 1;
-                        
-                        if (completionCount == [topStoriesArray count]) {
-                            completionHandler(topStoriesArray);
-                        }
-                    }];
-                }
+            if (!jsonError) {
+                [self loadStoriesByIdArray:topStoriesId fromIndex:fromIndex toIndex:toIndex completionHandler:^(NSArray *stories) {
+                    completionHandler(stories);
+                }];
             } else {
                 completionHandler(nil);
             }

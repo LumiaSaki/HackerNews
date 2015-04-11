@@ -22,6 +22,7 @@
 		0C66DD3B1AD3D177007E4B5A /* HNComment.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C66DD3A1AD3D177007E4B5A /* HNComment.m */; };
 		0C66DD3E1AD3D994007E4B5A /* HNLoadController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C66DD3D1AD3D994007E4B5A /* HNLoadController.m */; };
 		0C92A36A1AD7A93A005B4E61 /* HNStoryDetailLoadIndicatorBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C92A3691AD7A93A005B4E61 /* HNStoryDetailLoadIndicatorBarButtonItem.m */; };
+		0C92A36D1AD7BC1E005B4E61 /* HNUserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C92A36C1AD7BC1E005B4E61 /* HNUserInfoViewController.m */; };
 		0C9F93091AD55FAA00F40703 /* HNLoadMoreCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C9F93071AD55FAA00F40703 /* HNLoadMoreCell.m */; };
 		0C9F930A1AD55FAA00F40703 /* HNLoadMoreCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0C9F93081AD55FAA00F40703 /* HNLoadMoreCell.xib */; };
 		0C9F930D1AD56AE900F40703 /* Indicator.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0C9F930C1AD56AE900F40703 /* Indicator.gif */; };
@@ -72,6 +73,8 @@
 		0C66DD3D1AD3D994007E4B5A /* HNLoadController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNLoadController.m; sourceTree = "<group>"; };
 		0C92A3681AD7A93A005B4E61 /* HNStoryDetailLoadIndicatorBarButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNStoryDetailLoadIndicatorBarButtonItem.h; sourceTree = "<group>"; };
 		0C92A3691AD7A93A005B4E61 /* HNStoryDetailLoadIndicatorBarButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNStoryDetailLoadIndicatorBarButtonItem.m; sourceTree = "<group>"; };
+		0C92A36B1AD7BC1E005B4E61 /* HNUserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNUserInfoViewController.h; sourceTree = "<group>"; };
+		0C92A36C1AD7BC1E005B4E61 /* HNUserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNUserInfoViewController.m; sourceTree = "<group>"; };
 		0C9F93061AD55FAA00F40703 /* HNLoadMoreCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNLoadMoreCell.h; sourceTree = "<group>"; };
 		0C9F93071AD55FAA00F40703 /* HNLoadMoreCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNLoadMoreCell.m; sourceTree = "<group>"; };
 		0C9F93081AD55FAA00F40703 /* HNLoadMoreCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HNLoadMoreCell.xib; sourceTree = "<group>"; };
@@ -201,6 +204,8 @@
 				0C1C68951AD6189A00A0D146 /* HNCommentViewController.m */,
 				0CDFF9F11AD677D700161AF1 /* HNStoryDetailViewController.h */,
 				0CDFF9F21AD677D700161AF1 /* HNStoryDetailViewController.m */,
+				0C92A36B1AD7BC1E005B4E61 /* HNUserInfoViewController.h */,
+				0C92A36C1AD7BC1E005B4E61 /* HNUserInfoViewController.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -395,6 +400,7 @@
 				0C66DD2E1AD3CA7A007E4B5A /* HNTopStoryTableViewCell.m in Sources */,
 				0C66DD081AD3C718007E4B5A /* AppDelegate.m in Sources */,
 				0C66DD321AD3CBD0007E4B5A /* HNStory.m in Sources */,
+				0C92A36D1AD7BC1E005B4E61 /* HNUserInfoViewController.m in Sources */,
 				0C66DD051AD3C718007E4B5A /* main.m in Sources */,
 				0CDFF9E81AD6541900161AF1 /* HNCommentCell.m in Sources */,
 				0C1C68961AD6189A00A0D146 /* HNCommentViewController.m in Sources */,
