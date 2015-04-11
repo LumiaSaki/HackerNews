@@ -149,10 +149,10 @@
             </objects>
             <point key="canvasLocation" x="21" y="-4553"/>
         </scene>
-        <!--User Info View Controller-->
+        <!--User Info-->
         <scene sceneID="lZP-Gb-Qlr">
             <objects>
-                <viewController storyboardIdentifier="UserInfoViewController" id="dGR-49-GX3" customClass="HNUserInfoViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="UserInfoViewController" title="User Info" id="dGR-49-GX3" customClass="HNUserInfoViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="edg-v9-DGK"/>
                         <viewControllerLayoutGuide type="bottom" id="KeK-M3-Bax"/>

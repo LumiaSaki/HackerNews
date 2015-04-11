@@ -10,6 +10,7 @@
 #import "HNLoadController.h"
 #import "HNTopStoryTableViewCell.h"
 #import "HNCommentCell.h"
+#import "HNCommentViewController.h"
 
 static NSString *SUBMITTED_STORY_CELL_IDENTIFIER = @"SubmittedStoryCell";
 static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
@@ -68,7 +69,7 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
             
             [self loadMore:5 submittedArray:user.submitted];
             
-            [_indicator stopAnimating];
+//            [_indicator stopAnimating];
         });
     }];
 }
@@ -91,6 +92,8 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_submittedTableView reloadData];
+                
+                [_indicator stopAnimating];
             });
         }
     }];
@@ -106,6 +109,8 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == [_submittedStories count] - 1) {
+        [_indicator startAnimating];
+        
         [self loadMore:5 submittedArray:_user.submitted];
     }
     
@@ -114,12 +119,21 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
     
         HNStory *story = _submittedStories[indexPath.row];
         
-        submittedStoryCell.authorLabel.text = story.author;
-        submittedStoryCell.titleLabel.text = story.title;
-        submittedStoryCell.clickCountLabel.text = [NSString stringWithFormat:@"clicked:%lu", (unsigned long)story.score];
-        submittedStoryCell.commentCountLabel.text = [NSString stringWithFormat:@"comments:%lu", (unsigned long)[story.comments count]];
+        if (story.title == nil) {
+            submittedStoryCell.authorLabel.text = @"[deleted]";
+            submittedStoryCell.titleLabel.text = @"[deleted]";
+            submittedStoryCell.clickCountLabel.text = @"";
+            submittedStoryCell.commentCountLabel.text = @"";
+            
+        } else {
+            submittedStoryCell.authorLabel.text = story.author;
+            submittedStoryCell.titleLabel.text = story.title;
+            submittedStoryCell.clickCountLabel.text = [NSString stringWithFormat:@"clicked:%lu", (unsigned long)story.score];
+            submittedStoryCell.commentCountLabel.text = [NSString stringWithFormat:@"comments:%lu", (unsigned long)[story.comments count]];
+        }
         
         return submittedStoryCell;
+        
     } else if ([_submittedStories[indexPath.row] isKindOfClass:[HNComment class]]) {
         HNCommentCell *commentCell = [tableView dequeueReusableCellWithIdentifier:SUBMITTED_COMMENT_CELL_IDENTIFIER];
         
@@ -144,6 +158,17 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
     } else {
         return nil;
     }
+}
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([_submittedStories[indexPath.row] isKindOfClass:[HNStory class]]) {
+        HNStory *story = _submittedStories[indexPath.row];
+        
+        HNCommentViewController *commentVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentViewController"];
+        
+        commentVC.story = story;
+    
+        [self.navigationController pushViewController:commentVC animated:YES];
+    }
 }
 @end

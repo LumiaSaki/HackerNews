@@ -23,4 +23,8 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"StorySourceButtonPressed" object:self];
 }
 
+- (IBAction)authorButtonPressed:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"StoryAuthorButtonPressed" object:self userInfo:@{@"userId" : _storyAuthorButton.titleLabel.text}];
+}
+
 @end

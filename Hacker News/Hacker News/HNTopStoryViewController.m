@@ -85,10 +85,17 @@ static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
     
     HNStory *story = _topStories[indexPath.row];
     
-    topStoryCell.titleLabel.text = story.title;
-    topStoryCell.authorLabel.text = story.author;
-    topStoryCell.clickCountLabel.text = [NSString stringWithFormat:@"clicked:%lu", (unsigned long)story.score];
-    topStoryCell.commentCountLabel.text = [NSString stringWithFormat:@"comments:%lu", (unsigned long)[story.comments count]];
+    if (story.title == nil) {
+        topStoryCell.titleLabel.text = @"[deleted]";
+        topStoryCell.authorLabel.text = @"[deleted]";
+        topStoryCell.clickCountLabel.text = @"";
+        topStoryCell.commentCountLabel.text = @"";
+    } else {
+        topStoryCell.titleLabel.text = story.title;
+        topStoryCell.authorLabel.text = story.author;
+        topStoryCell.clickCountLabel.text = [NSString stringWithFormat:@"clicked:%lu", (unsigned long)story.score];
+        topStoryCell.commentCountLabel.text = [NSString stringWithFormat:@"comments:%lu", (unsigned long)[story.comments count]];
+    }
     
     return topStoryCell;
 }

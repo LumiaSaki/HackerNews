@@ -28,15 +28,6 @@
                             </mask>
                         </variation>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="td7-Da-6hz">
-                        <rect key="frame" x="8" y="102" width="304" height="21"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="21" id="ufh-qf-hbz"/>
-                        </constraints>
-                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EEZ-VR-wXO">
                         <rect key="frame" x="8" y="64" width="56" height="30"/>
                         <constraints>
@@ -50,32 +41,44 @@
                             <action selector="sourceButtonPressed:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="m3S-Jq-C2n"/>
                         </connections>
                     </button>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ukv-Ok-Zc5">
+                        <rect key="frame" x="8" y="102" width="304" height="23"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="23" id="EIw-Qx-F9q"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <state key="normal" title="Button">
+                            <color key="titleColor" red="1" green="0.51334397809999999" blue="0.078431372550000003" alpha="1" colorSpace="deviceRGB"/>
+                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                        <connections>
+                            <action selector="authorButtonPressed:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="rOl-dq-8AV"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="Ukv-Ok-Zc5" firstAttribute="top" secondItem="EEZ-VR-wXO" secondAttribute="bottom" constant="8" id="2cm-lR-gz9"/>
                     <constraint firstItem="wSU-e0-KwJ" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="3mj-cI-erO"/>
+                    <constraint firstItem="Ukv-Ok-Zc5" firstAttribute="bottom" secondItem="H2p-sc-9uM" secondAttribute="bottomMargin" id="6Xq-Hj-pDP"/>
                     <constraint firstItem="wSU-e0-KwJ" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="9d5-VN-13s"/>
-                    <constraint firstAttribute="bottomMargin" secondItem="td7-Da-6hz" secondAttribute="bottom" constant="2" id="OPa-k0-FdT"/>
+                    <constraint firstItem="Ukv-Ok-Zc5" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="OIO-4y-Q1N"/>
                     <constraint firstItem="EEZ-VR-wXO" firstAttribute="top" secondItem="wSU-e0-KwJ" secondAttribute="bottom" constant="8" id="PVk-dC-SGG"/>
-                    <constraint firstAttribute="bottomMargin" secondItem="td7-Da-6hz" secondAttribute="bottom" constant="2" id="Rs8-Fn-ikM"/>
                     <constraint firstItem="wSU-e0-KwJ" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="U0I-IB-Zdm"/>
-                    <constraint firstItem="td7-Da-6hz" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="Wng-rm-Ogb"/>
                     <constraint firstAttribute="trailingMargin" secondItem="EEZ-VR-wXO" secondAttribute="trailing" constant="248" id="YJx-tS-WaJ"/>
-                    <constraint firstItem="td7-Da-6hz" firstAttribute="top" secondItem="EEZ-VR-wXO" secondAttribute="bottom" constant="8" id="aSU-Jn-xre"/>
                     <constraint firstItem="EEZ-VR-wXO" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="add-X0-84E"/>
                     <constraint firstItem="EEZ-VR-wXO" firstAttribute="top" secondItem="wSU-e0-KwJ" secondAttribute="bottom" constant="8" id="c0B-Op-psI"/>
-                    <constraint firstItem="td7-Da-6hz" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="p7g-Ci-T3L"/>
+                    <constraint firstItem="Ukv-Ok-Zc5" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="iqi-oN-reo"/>
                     <constraint firstItem="EEZ-VR-wXO" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="qyl-Ed-bi8"/>
                 </constraints>
                 <variation key="default">
                     <mask key="constraints">
                         <exclude reference="c0B-Op-psI"/>
                         <exclude reference="qyl-Ed-bi8"/>
-                        <exclude reference="OPa-k0-FdT"/>
                     </mask>
                 </variation>
             </tableViewCellContentView>
             <connections>
-                <outlet property="storyAuthorLabel" destination="td7-Da-6hz" id="2Xz-JO-vHk"/>
+                <outlet property="storyAuthorButton" destination="Ukv-Ok-Zc5" id="25P-c7-AI8"/>
                 <outlet property="storyTitleLabel" destination="wSU-e0-KwJ" id="cbE-XL-EPv"/>
             </connections>
             <point key="canvasLocation" x="478" y="384"/>

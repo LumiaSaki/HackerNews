@@ -40,6 +40,7 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
         
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(storySourceButtonPressed) name:@"StorySourceButtonPressed" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(authorButtonPressed:) name:@"AuthorButtonInCommentPressed" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(authorButtonPressed:) name:@"StoryAuthorButtonPressed" object:nil];
     
     [_indicator startAnimating];
 
@@ -85,7 +86,7 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
         HNCommentStoryCell *storyCommentCell = [tableView dequeueReusableCellWithIdentifier:COMMENT_STORY_IDENTIFIER forIndexPath:indexPath];
         
         storyCommentCell.storyTitleLabel.text = story.title;
-        storyCommentCell.storyAuthorLabel.text = [NSString stringWithFormat:@"Author by:%@",story.author];
+        [storyCommentCell.storyAuthorButton setTitle:[NSString stringWithFormat:@"%@",story.author] forState:UIControlStateNormal];
         
         return storyCommentCell;
         
@@ -104,6 +105,8 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
             commentCell.commentLabel.text = comment.contentText;
             
             NSUInteger padding = (comment.depth + 1) * 20;
+            
+            [commentCell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:commentCell.commentLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:commentCell.contentView attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
             
             [commentCell.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[authorLabel]-8-[commentLabel]-8-|" options:0 metrics:nil views:@{ @"commentLabel": commentCell.commentLabel , @"authorLabel" : commentCell.authorButton}]];
             [commentCell.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-%lu-[commentLabel]-20-|",(unsigned long)padding] options:0 metrics:nil views:@{ @"commentLabel": commentCell.commentLabel}]];
