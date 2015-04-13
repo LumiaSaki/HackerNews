@@ -17,7 +17,7 @@
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xTT-dW-y0P">
                         <rect key="frame" x="7" y="44" width="307" height="144"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WQl-5l-th1">
@@ -45,15 +45,21 @@
                     <constraint firstItem="xTT-dW-y0P" firstAttribute="bottom" secondItem="H2p-sc-9uM" secondAttribute="bottomMargin" id="3OZ-2s-kR5"/>
                     <constraint firstItem="xTT-dW-y0P" firstAttribute="top" secondItem="WQl-5l-th1" secondAttribute="bottom" constant="8" id="7L6-Jc-rQB"/>
                     <constraint firstItem="WQl-5l-th1" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="Ee2-c5-r9R"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="xTT-dW-y0P" secondAttribute="trailing" constant="-2" id="IG8-o4-eQS"/>
+                    <constraint firstItem="xTT-dW-y0P" firstAttribute="top" secondItem="WQl-5l-th1" secondAttribute="bottom" constant="8" id="JHW-B1-RAi"/>
                     <constraint firstItem="xTT-dW-y0P" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="-1" id="KLF-wd-iMk"/>
                     <constraint firstItem="WQl-5l-th1" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="Lxe-jB-xkt"/>
                     <constraint firstItem="WQl-5l-th1" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="XCl-Kg-pUs"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="xTT-dW-y0P" secondAttribute="bottom" constant="-8" id="dhl-1J-lcA"/>
                     <constraint firstItem="xTT-dW-y0P" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="stQ-jK-6ES"/>
                 </constraints>
                 <variation key="default">
                     <mask key="constraints">
                         <exclude reference="3OZ-2s-kR5"/>
+                        <exclude reference="7L6-Jc-rQB"/>
+                        <exclude reference="IG8-o4-eQS"/>
                         <exclude reference="KLF-wd-iMk"/>
+                        <exclude reference="dhl-1J-lcA"/>
                     </mask>
                 </variation>
             </tableViewCellContentView>

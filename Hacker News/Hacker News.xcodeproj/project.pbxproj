@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0C1C68961AD6189A00A0D146 /* HNCommentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C1C68951AD6189A00A0D146 /* HNCommentViewController.m */; };
+		0C4E68771ADB66BE00B940C8 /* HNLocalDataController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C4E68761ADB66BE00B940C8 /* HNLocalDataController.m */; };
 		0C66DD051AD3C718007E4B5A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C66DD041AD3C718007E4B5A /* main.m */; };
 		0C66DD081AD3C718007E4B5A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C66DD071AD3C718007E4B5A /* AppDelegate.m */; };
 		0C66DD0B1AD3C718007E4B5A /* HNTopStoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C66DD0A1AD3C718007E4B5A /* HNTopStoryViewController.m */; };
@@ -47,6 +48,8 @@
 /* Begin PBXFileReference section */
 		0C1C68941AD6189A00A0D146 /* HNCommentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNCommentViewController.h; sourceTree = "<group>"; };
 		0C1C68951AD6189A00A0D146 /* HNCommentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNCommentViewController.m; sourceTree = "<group>"; };
+		0C4E68751ADB66BE00B940C8 /* HNLocalDataController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNLocalDataController.h; sourceTree = "<group>"; };
+		0C4E68761ADB66BE00B940C8 /* HNLocalDataController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNLocalDataController.m; sourceTree = "<group>"; };
 		0C66DCFF1AD3C718007E4B5A /* Hacker News.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Hacker News.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C66DD031AD3C718007E4B5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0C66DD041AD3C718007E4B5A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -221,6 +224,8 @@
 				0C66DD3A1AD3D177007E4B5A /* HNComment.m */,
 				0C66DD3C1AD3D994007E4B5A /* HNLoadController.h */,
 				0C66DD3D1AD3D994007E4B5A /* HNLoadController.m */,
+				0C4E68751ADB66BE00B940C8 /* HNLocalDataController.h */,
+				0C4E68761ADB66BE00B940C8 /* HNLocalDataController.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -392,6 +397,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C66DD0B1AD3C718007E4B5A /* HNTopStoryViewController.m in Sources */,
+				0C4E68771ADB66BE00B940C8 /* HNLocalDataController.m in Sources */,
 				0CDFF9F31AD677D700161AF1 /* HNStoryDetailViewController.m in Sources */,
 				0CDFF9ED1AD6557F00161AF1 /* HNCommentStoryCell.m in Sources */,
 				0C66DD3B1AD3D177007E4B5A /* HNComment.m in Sources */,

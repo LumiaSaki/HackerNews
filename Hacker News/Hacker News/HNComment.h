@@ -18,6 +18,8 @@
 @property (nonatomic, strong) NSDate *time; //time
 @property (nonatomic, strong) NSString *type;   //type, 'comment'
 
+//TODO:update in LoadController.
+@property (nonatomic) NSUInteger underStoryId;
 @property (nonatomic) NSUInteger depth; //comment depth
 
 - (instancetype)initWithAuthor:(NSString *)author commentId:(NSUInteger)commentId subComments:(NSArray *)subComments parent:(NSUInteger)parent contentText:(NSString *)contentText time:(NSDate *)time type:(NSString *)type depth:(NSUInteger)depth;

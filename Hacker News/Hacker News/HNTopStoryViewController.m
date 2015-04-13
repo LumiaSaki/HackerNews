@@ -38,7 +38,6 @@ static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
     [_topStoriesTableView registerNib:[UINib nibWithNibName:@"HNTopStoryTableViewCell" bundle:nil] forCellReuseIdentifier:TOP_STORY_CELL_IDENTIFIER];
     
     _currentTopStoryIndex = 0;
-
     
 //    _loadController = [HNLoadController sharedLoadController];
     

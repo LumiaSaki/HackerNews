@@ -71,7 +71,7 @@ static NSUInteger count = 0;
     __block NSUInteger completionCount = 0;
     __block NSUInteger itemCount= 0;
     
-    for (NSUInteger i = fromIndex; i <= MIN(toIndex, [itemArray count] - 1); i++) {
+    for (NSUInteger i = fromIndex; i <= MIN(toIndex, [itemIdArray count] - 1); i++) {
         NSNumber *itemId = itemIdArray[i];
         
         itemCount += 1;
@@ -185,7 +185,7 @@ static NSUInteger count = 0;
     [self loadStoryById:storyId completionHandler:^(HNStory *story) {
         NSMutableDictionary *comments = [NSMutableDictionary new];
         
-        [self loadCommentsFromCommentsIdArray:story.comments toDict:comments depth:0 completionHandler:^(NSMutableDictionary *comments) {
+        [self loadCommentsFromCommentsIdArray:story.comments toDict:comments depth:0 underStoryId:storyId completionHandler:^(NSMutableDictionary *comments) {
             completionHandler(comments);
         }];
     }];
@@ -212,7 +212,7 @@ static NSUInteger count = 0;
     [dataTask resume];
 }
 
-- (void)loadCommentById:(NSUInteger)commentId completionHandler:(void(^)(HNComment *comment))completionHandler {
+- (void)loadCommentById:(NSUInteger)commentId underStoryId:(NSUInteger)underStoryId completionHandler:(void(^)(HNComment *comment))completionHandler {
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%lu%@",ITEM_URL_PREFIX,(unsigned long)commentId,URL_SUFFIX]];
     
     [self dataFromURL:url completionHandler:^(NSData *data) {
@@ -222,7 +222,9 @@ static NSUInteger count = 0;
             NSDictionary *commentDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&jsonError];
             
             if (commentDict != nil && !jsonError) {
-                HNComment *comment = [[HNComment alloc] initWithAuthor:commentDict[@"by"] commentId:[commentDict[@"id"] unsignedIntegerValue] subComments:commentDict[@"kids"] parent:[commentDict[@"parent"] unsignedIntegerValue] contentText:commentDict[@"text"] time:[NSDate dateWithTimeIntervalSince1970:[commentDict[@"time"] unsignedIntegerValue]] type:commentDict[@"type"] depth:0];
+                HNComment *comment = [[HNComment alloc] initWithAuthor:commentDict[@"by"] commentId:[commentDict[@"id"] unsignedIntegerValue] subComments:commentDict[@"kids"] parent:[commentDict[@"parent"] unsignedIntegerValue] contentText:commentDict[@"text"] time:[NSDate dateWithTimeIntervalSince1970:[commentDict[@"time"] unsignedIntegerValue]] type:commentDict[@"type"] depth:0 ];
+                
+                comment.underStoryId = underStoryId;
                 
                 completionHandler(comment);
             } else {
@@ -234,17 +236,19 @@ static NSUInteger count = 0;
     }];
 }
 
-- (void)loadCommentsFromCommentsIdArray:(NSArray *)commentsIdArray toDict:(NSMutableDictionary *)dict depth:(NSUInteger)depth completionHandler:(void(^)(NSMutableDictionary *commentsDict))completionHandler {
+- (void)loadCommentsFromCommentsIdArray:(NSArray *)commentsIdArray toDict:(NSMutableDictionary *)dict depth:(NSUInteger)depth underStoryId:(NSUInteger)underStoryId completionHandler:(void(^)(NSMutableDictionary *commentsDict))completionHandler {
     
     for (NSNumber *commentId in commentsIdArray) {
         count ++;
-            [self loadCommentById:[commentId unsignedIntegerValue] completionHandler:^(HNComment *comment) {
+        [self loadCommentById:[commentId unsignedIntegerValue] underStoryId:underStoryId completionHandler:^(HNComment *comment) {
                 if (comment != nil) {
                     comment.depth = depth;
+                    comment.underStoryId = underStoryId;
+                    
                     [dict setValue:comment forKey:[NSString stringWithFormat:@"%lu", [commentId unsignedIntegerValue]]];
                     
                     if ([comment.subComments count] != 0) {
-                        [self loadCommentsFromCommentsIdArray:comment.subComments toDict:dict depth:depth + 1 completionHandler:completionHandler];
+                        [self loadCommentsFromCommentsIdArray:comment.subComments toDict:dict depth:depth + 1 underStoryId:underStoryId completionHandler:completionHandler];
                     }
                     count --;
                 }
