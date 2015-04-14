@@ -24,11 +24,6 @@
     FMDatabase *db = [self getDatabase];
     
     if ([db open]) {
-//        NSString *createStoryTableSql = @"create table if not exists story_table (id bigint unsigned primary key auto_increment not null, author text, descendants int, story_id int unsigned not null, score int unsigned, time text, title text, type text, url text)";
-        
-//        [db executeUpdate:createStoryTableSql];
-
-        //TODO:暂时先实现回复页的缓存逻辑
         NSString *createCommentTableSql = @"create table if not exists comment_table (id integer primary key autoincrement not null, author text, comment_id integer unsigned not null, under_story_id integer, content_text text, time text, type text, depth integer)";
         [db executeUpdate:createCommentTableSql];
         
@@ -95,49 +90,12 @@
         
         [dateFormatter setDateFormat:@"yyyy/MM/dd"];
         
-        NSString *insertCommentSql = [NSString stringWithFormat:@"insert into comment_table (author, comment_id, under_story_id, content_text, time, type, depth) values ('%@', %lu, %lu, '%@', '%@', '%@', %lu)", comment.author, (unsigned long)comment.commentId, (unsigned long)comment.underStoryId, comment.contentText, [dateFormatter stringFromDate:comment.time], comment.type, comment.depth];
+        NSString *insertCommentSql = [NSString stringWithFormat:@"insert into comment_table (author, comment_id, under_story_id, content_text, time, type, depth) values ('%@', %lu, %lu, '%@', '%@', '%@', %lu)", comment.author, (unsigned long)comment.commentId, (unsigned long)comment.underStoryId, comment.contentText, [dateFormatter stringFromDate:comment.time], comment.type, (unsigned long)comment.depth];
         
         [db executeUpdate:insertCommentSql];
         
         [db close];
     }
-}
-
-//update a comment.
-- (void)updateComment:(HNComment *)comment {
-    FMDatabase *db = [self getDatabase];
-    
-    if ([db open]) {
-                    NSLog(@"%@", [self getCommentByCommentId:comment.commentId]);
-        if ([[self getCommentByCommentId:comment.commentId] count] == 0) {  //如果comment不在数据库中存在，则直接插入comment
-
-            [self insertComment:comment];
-        } else {    //更新comment
-            NSDateFormatter *dateFormatter = [NSDateFormatter new];
-            
-            [dateFormatter setDateFormat:@"yyyy/MM/dd"];
-            
-            NSString *updateCommentSql = [NSString stringWithFormat:@"update comment_table set author = '%@', content_text = '%@', time = '%@', type = '%@' where comment_id = %lu", comment.author, comment.contentText, [dateFormatter stringFromDate:comment.time], comment.type, (unsigned long)comment.commentId];
-        
-            [db executeUpdate:updateCommentSql];
-        }
-        [db close];
-    }
-}
-
-- (NSArray *)getCommentByCommentId:(NSUInteger)commentId {
-    FMDatabase *db = [self getDatabase];
-    
-    NSMutableArray *commentArray;
-    if ([db open]) {
-        NSString *selectCommentSql = [NSString stringWithFormat:@"select * from comment_table where comment_id = %lu", commentId];
-        
-        commentArray = [[NSMutableArray alloc] initWithArray:[self getDataForAttr:[self getCommentColumnArray] AndSql:selectCommentSql]];
-        
-        [db close];
-    }
-    
-    return commentArray;
 }
 
 //get comments array(all).
@@ -148,8 +106,6 @@
     
     if ([db open]) {
         NSString *selectCommentSql = [NSString stringWithFormat:@"select * from comment_table where under_story_id = %lu order by id", (unsigned long)storyId];
-        
-//        comments = [[NSMutableArray alloc] initWithArray:[self getDataForAttr:[self getCommentColumnArray] AndSql:selectCommentSql]];
         
         NSArray *resultArray = [self getDataForAttr:[self getCommentColumnArray] AndSql:selectCommentSql];
         for (NSDictionary *commentDict in resultArray) {
@@ -167,6 +123,18 @@
     }
     
     return comments;
+}
+
+- (void)deleteCommentsByStoryId:(NSUInteger)storyId {
+    FMDatabase *db = [self getDatabase];
+    
+    if ([db open]) {
+        NSString *deleteCommentsUnderStoryIdSql = [NSString stringWithFormat:@"delete from comment_table where under_story_id = %lu", storyId];
+        
+        [db executeUpdate:deleteCommentsUnderStoryIdSql];
+        
+        [db close];
+    }
 }
 
 #pragma mark - Private Methods
@@ -199,6 +167,21 @@
     NSString *dbpath = [docsdir stringByAppendingPathComponent:@"HackerNews.sqlite"];
     FMDatabase *db = [FMDatabase databaseWithPath:dbpath];
     return db;
+}
+
+- (NSArray *)getCommentByCommentId:(NSUInteger)commentId {
+    FMDatabase *db = [self getDatabase];
+    
+    NSMutableArray *commentArray;
+    if ([db open]) {
+        NSString *selectCommentSql = [NSString stringWithFormat:@"select * from comment_table where comment_id = %lu", (unsigned long)commentId];
+        
+        commentArray = [[NSMutableArray alloc] initWithArray:[self getDataForAttr:[self getCommentColumnArray] AndSql:selectCommentSql]];
+        
+        [db close];
+    }
+    
+    return commentArray;
 }
 
 - (NSArray *)getStoryColumnArray {

@@ -14,8 +14,10 @@
 @interface HNLocalDataController : NSObject
 
 + (instancetype)sharedLocalDataController;
+
 - (void)createTableIfNeeded;
-- (void)updateComment:(HNComment *)comment;
+- (void)insertComment:(HNComment *)comment;
 - (NSMutableArray *)getCommentsByStoryId:(NSUInteger)storyId;
+- (void)deleteCommentsByStoryId:(NSUInteger)storyId;
 
 @end

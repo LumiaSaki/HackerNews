@@ -12,6 +12,7 @@
 #import "HNStoryDetailViewController.h"
 #import "HNUserInfoViewController.h"
 #import "HNLocalDataController.h"
+#import <Masonry.h>
 
 static NSString *COMMENT_CELL_IDENTIFIER = @"CommentCell";
 static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
@@ -24,6 +25,7 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
 @property (nonatomic, strong) HNLoadController *loadController;
 @property (nonatomic, strong) HNLocalDataController *localDataController;
 @property (nonatomic, strong) NSArray *comments;
+@property (nonatomic, strong) UIRefreshControl *refreshController;
 
 
 @end
@@ -43,7 +45,12 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
     
     [_commentTableView registerNib:[UINib nibWithNibName:@"HNCommentCell" bundle:nil] forCellReuseIdentifier:COMMENT_CELL_IDENTIFIER];
     [_commentTableView registerNib:[UINib nibWithNibName:@"HNCommentStoryCell" bundle:nil] forCellReuseIdentifier:COMMENT_STORY_IDENTIFIER];
-        
+    
+    _refreshController = [UIRefreshControl new];
+    [_refreshController addTarget:self action:@selector(refreshData) forControlEvents:UIControlEventValueChanged];
+    
+    [_commentTableView addSubview:_refreshController];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(storySourceButtonPressed) name:@"StorySourceButtonPressed" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(authorButtonPressed:) name:@"AuthorButtonInCommentPressed" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(authorButtonPressed:) name:@"StoryAuthorButtonPressed" object:nil];
@@ -68,20 +75,23 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
         [self sortCommentsDict:commentsDict completionHandler:^(NSArray *sortedComments) {
             
             if ([cachedComments count] != [sortedComments count] - 1) {
+                [_localDataController deleteCommentsByStoryId:_story.storyId];
                 
                 for (id object in sortedComments) {
                     if ([object isKindOfClass:[HNComment class]]) {
-                        [_localDataController updateComment:object];
+                        [_localDataController insertComment:object];
                     }
                 }
                 
-                _comments = sortedComments;
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [_indicator stopAnimating];
+                if ([cachedComments count] == 0) {
+                    _comments = sortedComments;
                     
-                    [_commentTableView reloadData];
-                });
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [_indicator stopAnimating];
+                        
+                        [_commentTableView reloadData];
+                    });
+                }
             }
         }];
     }];
@@ -123,7 +133,7 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
     } else if ([_comments[indexPath.row] isKindOfClass:[HNComment class]]) {
         HNCommentCell *commentCell = [tableView dequeueReusableCellWithIdentifier:COMMENT_CELL_IDENTIFIER forIndexPath:indexPath];
         
-        [commentCell.contentView removeConstraints:commentCell.commentLabel.constraints];
+//        [commentCell.contentView removeConstraints:commentCell.commentLabel.constraints];
         
         HNComment *comment = _comments[indexPath.row];
         
@@ -135,11 +145,13 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
             commentCell.commentLabel.text = comment.contentText;
             
             NSUInteger padding = (comment.depth + 1) * 20;
-            
-            [commentCell.contentView addConstraint:[NSLayoutConstraint constraintWithItem:commentCell.commentLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:commentCell.contentView attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
-            
-            [commentCell.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[authorLabel]-8-[commentLabel]-8-|" options:0 metrics:nil views:@{ @"commentLabel": commentCell.commentLabel , @"authorLabel" : commentCell.authorButton}]];
-            [commentCell.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-%lu-[commentLabel]-2-|",(unsigned long)padding] options:0 metrics:nil views:@{ @"commentLabel": commentCell.commentLabel}]];
+
+            [commentCell.commentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.left.mas_equalTo(commentCell.contentView).with.offset(padding);
+//                make.right.mas_equalTo(commentCell.contentView).with.offset(-2);
+//                make.bottom.mas_equalTo(commentCell.contentView).with.offset(-8);
+//                make.top.mas_equalTo(commentCell.authorButton).with.offset(8);
+            }];
             
             [commentCell.contentView setNeedsLayout];
             [commentCell.contentView layoutIfNeeded];
@@ -195,6 +207,34 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
     userInfoVC.userId = notification.userInfo[@"userId"];
     
     [self.navigationController pushViewController:userInfoVC animated:YES];
+}
+
+- (void)refreshData {
+    NSArray *cachedComments = [_localDataController getCommentsByStoryId:_story.storyId];
+    
+    [_loadController loadAllCommentsUnderStoryId:_story.storyId completionHandler:^(NSMutableDictionary *commentsDict) {
+        [self sortCommentsDict:commentsDict completionHandler:^(NSArray *sortedComments) {
+            
+            if ([cachedComments count] != [sortedComments count] - 1) {
+                [_localDataController deleteCommentsByStoryId:_story.storyId];
+                
+                for (id object in sortedComments) {
+                    if ([object isKindOfClass:[HNComment class]]) {
+                        [_localDataController insertComment:object];
+                    }
+                }
+                
+            }
+            _comments = sortedComments;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_commentTableView reloadData];
+                
+                [_refreshController endRefreshing];
+            });
+
+        }];
+    }];
 }
 
 - (void)dealloc {

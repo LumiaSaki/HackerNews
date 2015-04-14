@@ -65,7 +65,7 @@ static NSUInteger count = 0;
     }
 }
 //TODO:to be finished.
-- (void)loadStorieByItemIdArray:(NSArray *)itemIdArray fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex completionHandler:(void (^)(NSMutableArray *))completionHandler {
+- (void)loadStoryOrCommentByItemIdArray:(NSArray *)itemIdArray fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex completionHandler:(void (^)(NSMutableArray *))completionHandler {
     NSMutableArray *itemArray = [NSMutableArray new];
     
     __block NSUInteger completionCount = 0;
@@ -84,7 +84,6 @@ static NSUInteger count = 0;
             NSDictionary *itemDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&jsonError];
             
             if (itemDict != nil && !jsonError) {
-//                NSLog(@"%ld", [itemId longValue]);
                 if ([itemDict[@"type"] isEqualToString:@"story"] /*&& ![itemDict[@"deleted"] isEqualToString:@"true"]*/) {
                     
                     HNStory *story = [[HNStory alloc] initWithAuthor:itemDict[@"by"] descendants:[itemDict[@"descendants"] unsignedIntegerValue] storyId:[itemDict[@"id"] unsignedIntegerValue] comments:itemDict[@"kids"] score:[itemDict[@"score"] unsignedIntegerValue] time:[NSDate dateWithTimeIntervalSince1970:[itemDict[@"time"] unsignedIntegerValue]] title:itemDict[@"title"] type:itemDict[@"type"] url:itemDict[@"url"]];
@@ -245,7 +244,7 @@ static NSUInteger count = 0;
                     comment.depth = depth;
                     comment.underStoryId = underStoryId;
                     
-                    [dict setValue:comment forKey:[NSString stringWithFormat:@"%lu", [commentId unsignedIntegerValue]]];
+                    [dict setValue:comment forKey:[NSString stringWithFormat:@"%lu", (unsigned long)[commentId unsignedIntegerValue]]];
                     
                     if ([comment.subComments count] != 0) {
                         [self loadCommentsFromCommentsIdArray:comment.subComments toDict:dict depth:depth + 1 underStoryId:underStoryId completionHandler:completionHandler];

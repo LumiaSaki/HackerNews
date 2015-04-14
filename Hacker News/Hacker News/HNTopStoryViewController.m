@@ -39,6 +39,9 @@ static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
     
     _currentTopStoryIndex = 0;
     
+    [_refreshControl beginRefreshing];
+    
+    [self refreshData];
 //    _loadController = [HNLoadController sharedLoadController];
     
 //    [self refreshData];

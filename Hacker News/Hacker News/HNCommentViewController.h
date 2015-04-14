@@ -9,9 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "HNLoadController.h"
 
+#define WS(weakSelf)  __weak __typeof(&*self)weakSelf = self;
+
 @interface HNCommentViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
 
-//@property (nonatomic) NSUInteger storyId;
 @property (nonatomic, strong) NSString *storyTitle;
 @property (nonatomic, strong) NSString *storyUrlString;
 @property (nonatomic, strong) NSString *authorName;

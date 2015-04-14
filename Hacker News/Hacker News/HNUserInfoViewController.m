@@ -11,6 +11,7 @@
 #import "HNTopStoryTableViewCell.h"
 #import "HNCommentCell.h"
 #import "HNCommentViewController.h"
+#import <Masonry.h>
 
 static NSString *SUBMITTED_STORY_CELL_IDENTIFIER = @"SubmittedStoryCell";
 static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
@@ -21,8 +22,8 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
 @property (weak, nonatomic) IBOutlet UITableView *submittedTableView;
 
 @property (nonatomic, strong) HNLoadController *loadController;
-@property (nonatomic, strong) NSMutableArray *submittedStories;
-@property (nonatomic) NSUInteger currentStoryIndex;
+@property (nonatomic, strong) NSMutableArray *submittedStoriesAndComments;
+@property (nonatomic) NSUInteger currentItemIndex;
 @property (nonatomic, strong) HNUser *user;
 
 
@@ -33,13 +34,13 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    _currentStoryIndex = 0;
+    _currentItemIndex = 0;
     
     _userIdLabel.text = _userId;
     
     _loadController = [HNLoadController sharedLoadController];
     
-    _submittedStories = [NSMutableArray new];
+    _submittedStoriesAndComments = [NSMutableArray new];
     
     [_submittedTableView registerNib:[UINib nibWithNibName:@"HNTopStoryTableViewCell" bundle:nil] forCellReuseIdentifier:SUBMITTED_STORY_CELL_IDENTIFIER];
     [_submittedTableView registerNib:[UINib nibWithNibName:@"HNCommentCell" bundle:nil] forCellReuseIdentifier:SUBMITTED_COMMENT_CELL_IDENTIFIER];
@@ -69,7 +70,6 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
             
             [self loadMore:5 submittedArray:user.submitted];
             
-//            [_indicator stopAnimating];
         });
     }];
 }
@@ -84,19 +84,28 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
         _loadController = [HNLoadController sharedLoadController];
     }
     
-    [_loadController loadStorieByItemIdArray:submittedArray fromIndex:_currentStoryIndex toIndex:_currentStoryIndex + moreCount - 1 completionHandler:^(NSMutableArray *itemArray) {
-        if (itemArray != nil) {
-            [_submittedStories addObjectsFromArray:itemArray];
-            
-            _currentStoryIndex += moreCount;
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [_submittedTableView reloadData];
+    if (submittedArray != nil) {
+        [_loadController loadStoryOrCommentByItemIdArray:submittedArray fromIndex:_currentItemIndex toIndex:_currentItemIndex + moreCount - 1 completionHandler:^(NSMutableArray *itemArray) {
+            if (itemArray != nil) {
+                [_submittedStoriesAndComments addObjectsFromArray:itemArray];
                 
-                [_indicator stopAnimating];
-            });
-        }
-    }];
+                _currentItemIndex += [itemArray count];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [_submittedTableView reloadData];
+                    
+                    [_indicator stopAnimating];
+                });
+            }
+        }];
+
+    } else {
+        [_indicator stopAnimating];
+    }
+    
+    if (_currentItemIndex == [submittedArray count]) {
+        [_indicator stopAnimating];
+    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -104,20 +113,20 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [_submittedStories count];
+    return [_submittedStoriesAndComments count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == [_submittedStories count] - 1) {
+    if (indexPath.row == [_submittedStoriesAndComments count] - 1) {
         [_indicator startAnimating];
         
         [self loadMore:5 submittedArray:_user.submitted];
     }
     
-    if ([_submittedStories[indexPath.row] isKindOfClass:[HNStory class]]) {
+    if ([_submittedStoriesAndComments[indexPath.row] isKindOfClass:[HNStory class]]) {
         HNTopStoryTableViewCell *submittedStoryCell = [tableView dequeueReusableCellWithIdentifier:SUBMITTED_STORY_CELL_IDENTIFIER];
     
-        HNStory *story = _submittedStories[indexPath.row];
+        HNStory *story = _submittedStoriesAndComments[indexPath.row];
         
         if (story.title == nil) {
             submittedStoryCell.authorLabel.text = @"[deleted]";
@@ -134,10 +143,10 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
         
         return submittedStoryCell;
         
-    } else if ([_submittedStories[indexPath.row] isKindOfClass:[HNComment class]]) {
+    } else if ([_submittedStoriesAndComments[indexPath.row] isKindOfClass:[HNComment class]]) {
         HNCommentCell *commentCell = [tableView dequeueReusableCellWithIdentifier:SUBMITTED_COMMENT_CELL_IDENTIFIER];
         
-        HNComment *comment = _submittedStories[indexPath.row];
+        HNComment *comment = _submittedStoriesAndComments[indexPath.row];
         
         if (comment.contentText == nil) {
             [commentCell.authorButton setTitle:@"[deleted]" forState:UIControlStateNormal];
@@ -149,11 +158,10 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
             commentCell.commentLabel.text = comment.contentText;
         }
         
-        [commentCell.contentView removeConstraints:commentCell.commentLabel.constraints];
+        [commentCell.commentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(commentCell.contentView).with.offset(15);
+        }];
         
-        [commentCell.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[authorLabel]-8-[commentLabel]-8-|" options:0 metrics:nil views:@{ @"commentLabel": commentCell.commentLabel , @"authorLabel" : commentCell.authorButton}]];
-        [commentCell.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-20-[commentLabel]-20-|" options:0 metrics:nil views:@{ @"commentLabel": commentCell.commentLabel}]];
-    
         return commentCell;
     } else {
         return nil;
@@ -161,8 +169,8 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([_submittedStories[indexPath.row] isKindOfClass:[HNStory class]]) {
-        HNStory *story = _submittedStories[indexPath.row];
+    if ([_submittedStoriesAndComments[indexPath.row] isKindOfClass:[HNStory class]]) {
+        HNStory *story = _submittedStoriesAndComments[indexPath.row];
         
         HNCommentViewController *commentVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentViewController"];
         

@@ -15,14 +15,15 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xTT-dW-y0P">
-                        <rect key="frame" x="7" y="44" width="307" height="144"/>
+                        <rect key="frame" x="8" y="44" width="304" height="136"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WQl-5l-th1">
+                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WQl-5l-th1">
                         <rect key="frame" x="8" y="8" width="304" height="28"/>
                         <constraints>
+                            <constraint firstAttribute="height" constant="28" id="7Aj-pC-qsS"/>
                             <constraint firstAttribute="height" constant="28" id="lyi-D9-ElO"/>
                             <constraint firstAttribute="height" constant="20" id="weg-Zq-YcG"/>
                         </constraints>
@@ -33,6 +34,8 @@
                         </state>
                         <variation key="default">
                             <mask key="constraints">
+                                <exclude reference="7Aj-pC-qsS"/>
+                                <exclude reference="lyi-D9-ElO"/>
                                 <exclude reference="weg-Zq-YcG"/>
                             </mask>
                         </variation>
@@ -42,24 +45,33 @@
                     </button>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="xTT-dW-y0P" firstAttribute="bottom" secondItem="H2p-sc-9uM" secondAttribute="bottomMargin" id="0BZ-wx-0XN"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="xTT-dW-y0P" secondAttribute="bottom" constant="-8" id="0Hf-9Y-Xdg"/>
                     <constraint firstItem="xTT-dW-y0P" firstAttribute="bottom" secondItem="H2p-sc-9uM" secondAttribute="bottomMargin" id="3OZ-2s-kR5"/>
                     <constraint firstItem="xTT-dW-y0P" firstAttribute="top" secondItem="WQl-5l-th1" secondAttribute="bottom" constant="8" id="7L6-Jc-rQB"/>
-                    <constraint firstItem="WQl-5l-th1" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="Ee2-c5-r9R"/>
+                    <constraint firstItem="xTT-dW-y0P" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="Hdv-fR-pK6"/>
                     <constraint firstAttribute="trailingMargin" secondItem="xTT-dW-y0P" secondAttribute="trailing" constant="-2" id="IG8-o4-eQS"/>
                     <constraint firstItem="xTT-dW-y0P" firstAttribute="top" secondItem="WQl-5l-th1" secondAttribute="bottom" constant="8" id="JHW-B1-RAi"/>
                     <constraint firstItem="xTT-dW-y0P" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="-1" id="KLF-wd-iMk"/>
-                    <constraint firstItem="WQl-5l-th1" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="Lxe-jB-xkt"/>
-                    <constraint firstItem="WQl-5l-th1" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="XCl-Kg-pUs"/>
                     <constraint firstAttribute="bottomMargin" secondItem="xTT-dW-y0P" secondAttribute="bottom" constant="-8" id="dhl-1J-lcA"/>
+                    <constraint firstItem="xTT-dW-y0P" firstAttribute="top" secondItem="WQl-5l-th1" secondAttribute="bottom" constant="8" id="f41-RE-HM6"/>
+                    <constraint firstItem="xTT-dW-y0P" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="36" id="fQE-h5-21U"/>
+                    <constraint firstItem="WQl-5l-th1" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="kwH-sJ-Tnn"/>
+                    <constraint firstItem="WQl-5l-th1" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="nSE-K8-3bx"/>
+                    <constraint firstItem="WQl-5l-th1" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="skY-Qz-oIf"/>
                     <constraint firstItem="xTT-dW-y0P" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="stQ-jK-6ES"/>
                 </constraints>
                 <variation key="default">
                     <mask key="constraints">
+                        <exclude reference="0Hf-9Y-Xdg"/>
                         <exclude reference="3OZ-2s-kR5"/>
                         <exclude reference="7L6-Jc-rQB"/>
                         <exclude reference="IG8-o4-eQS"/>
+                        <exclude reference="JHW-B1-RAi"/>
                         <exclude reference="KLF-wd-iMk"/>
                         <exclude reference="dhl-1J-lcA"/>
+                        <exclude reference="fQE-h5-21U"/>
+                        <exclude reference="stQ-jK-6ES"/>
                     </mask>
                 </variation>
             </tableViewCellContentView>
