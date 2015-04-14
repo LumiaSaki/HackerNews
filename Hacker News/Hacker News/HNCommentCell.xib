@@ -20,10 +20,11 @@
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WQl-5l-th1">
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WQl-5l-th1">
                         <rect key="frame" x="8" y="8" width="304" height="28"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="28" id="7Aj-pC-qsS"/>
+                            <constraint firstAttribute="height" constant="28" id="BlI-Ea-JvO"/>
                             <constraint firstAttribute="height" constant="28" id="lyi-D9-ElO"/>
                             <constraint firstAttribute="height" constant="20" id="weg-Zq-YcG"/>
                         </constraints>

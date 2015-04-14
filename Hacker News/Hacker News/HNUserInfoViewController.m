@@ -162,10 +162,9 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
             commentCell.commentLabel.text = @"[deleted]";
         } else {
             [commentCell.authorButton setTitle:comment.author forState:UIControlStateNormal];
-            commentCell.authorButton.userInteractionEnabled = NO;
-            
             commentCell.commentLabel.text = comment.contentText;
         }
+        commentCell.authorButton.userInteractionEnabled = NO;
         
         [commentCell.commentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(commentCell.contentView).with.offset(15);

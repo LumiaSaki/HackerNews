@@ -147,21 +147,22 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
         } else {
             [commentCell.authorButton setTitle:comment.author forState:UIControlStateNormal];
             commentCell.commentLabel.text = comment.contentText;
-            
-            //计算padding值，修改commentLabel的缩进
-            NSUInteger padding = (comment.depth + 1) * 20;
-
-            //通过修改约束更改缩进
-            [commentCell.commentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.left.mas_equalTo(commentCell.contentView).with.offset(padding);
-//                make.right.mas_equalTo(commentCell.contentView).with.offset(-2);
-//                make.bottom.mas_equalTo(commentCell.contentView).with.offset(-8);
-//                make.top.mas_equalTo(commentCell.authorButton).with.offset(8);
-            }];
-            
-            [commentCell.contentView setNeedsLayout];
-            [commentCell.contentView layoutIfNeeded];
         }
+        
+        //计算padding值，修改commentLabel的缩进
+        NSUInteger padding = (comment.depth + 1) * 20;
+        
+        //通过修改约束更改缩进
+        [commentCell.commentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(commentCell.contentView).with.offset(padding);
+            //                make.right.mas_equalTo(commentCell.contentView).with.offset(-2);
+            //                make.bottom.mas_equalTo(commentCell.contentView).with.offset(-8);
+            //                make.top.mas_equalTo(commentCell.authorButton).with.offset(8);
+        }];
+        
+        [commentCell.contentView setNeedsLayout];
+        [commentCell.contentView layoutIfNeeded];
+
         return commentCell;
     } else {
         return nil;
