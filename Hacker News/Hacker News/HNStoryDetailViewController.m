@@ -23,19 +23,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    
-    
+
     NSURL *url = [NSURL URLWithString:_story.url];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     
     [_storyDetailWebView loadRequest:request];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)webView {
@@ -63,6 +56,9 @@
     [self.view layoutIfNeeded];
 }
 
+/**
+ *  Bar Button中的Share按钮被点击后触发该方法
+ */
 - (void)share {
     UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[_story.title, _story.url] applicationActivities:nil];
     

@@ -17,7 +17,7 @@
 
 - (void)createTableIfNeeded;
 - (void)insertComment:(HNComment *)comment;
-- (NSMutableArray *)getCommentsByStoryId:(NSUInteger)storyId;
 - (void)deleteCommentsByStoryId:(NSUInteger)storyId;
+- (NSMutableArray *)getCommentsByStoryId:(NSUInteger)storyId;
 
 @end

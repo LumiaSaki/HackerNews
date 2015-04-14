@@ -15,8 +15,6 @@
 
 + (instancetype)sharedLoadController;
 
-//- (void)loadStorieByItemIdArray:(NSArray *)itemIdArray fromIndex:(NSUInteger)fromIndex fetchStoriesCount:(NSUInteger)fetchStoriesCount completionHandler:(void(^)(NSMutableArray *storiesArray, NSInteger lastStoryIndex))completionHandler;
-
 - (void)loadStoryOrCommentByItemIdArray:(NSArray *)itemIdArray fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex completionHandler:(void (^)(NSMutableArray *itemArray))completionHandler;
 - (void)loadStoriesByIdArray:(NSArray *)storiesIdArray fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex completionHandler:(void (^)(NSArray *stories))completionHandler;
 - (void)loadTopStoriesFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex completionHandler:(void (^)(NSArray *topStories))completionHandler;

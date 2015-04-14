@@ -34,7 +34,7 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+
     _loadController = [HNLoadController sharedLoadController];
     _localDataController = [HNLocalDataController sharedLocalDataController];
     
@@ -57,8 +57,10 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
     
     [_indicator startAnimating];
     
+    //从数据库中根据当前story id请求缓存的comment数据
     NSArray *cachedComments = [_localDataController getCommentsByStoryId:_story.storyId];
     
+    //如果有缓存的数据，则直接显示缓存的数据
     if ([cachedComments count] > 0) {
         
         NSMutableArray *commentArray = [[NSMutableArray alloc] initWithArray:cachedComments];
@@ -71,6 +73,7 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
         [_commentTableView reloadData];
     }
 
+    //后台继续根据当前story id请求comment数据，若请求返回的comment数量和本地缓存的comment数量不同，则在数据库中更新comment，但是不刷新当前view，新的数据在用户下次进入时展示；若返回的comment数量和本地相同，则不做任何操作
     [_loadController loadAllCommentsUnderStoryId:_story.storyId completionHandler:^(NSMutableDictionary *commentsDict) {
         [self sortCommentsDict:commentsDict completionHandler:^(NSArray *sortedComments) {
             
@@ -83,6 +86,7 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
                     }
                 }
                 
+                //第一次进入时，本地无缓存，将排好序的comment赋值给_comments用以刷新tableview
                 if ([cachedComments count] == 0) {
                     _comments = sortedComments;
                     
@@ -106,6 +110,8 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+# pragma mark - Table view Delegate & Data Source Methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
@@ -133,8 +139,6 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
     } else if ([_comments[indexPath.row] isKindOfClass:[HNComment class]]) {
         HNCommentCell *commentCell = [tableView dequeueReusableCellWithIdentifier:COMMENT_CELL_IDENTIFIER forIndexPath:indexPath];
         
-//        [commentCell.contentView removeConstraints:commentCell.commentLabel.constraints];
-        
         HNComment *comment = _comments[indexPath.row];
         
         if (comment.contentText == nil || [comment.contentText isEqualToString:@"(null)"]) {
@@ -144,8 +148,10 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
             [commentCell.authorButton setTitle:comment.author forState:UIControlStateNormal];
             commentCell.commentLabel.text = comment.contentText;
             
+            //计算padding值，修改commentLabel的缩进
             NSUInteger padding = (comment.depth + 1) * 20;
 
+            //通过修改约束更改缩进
             [commentCell.commentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.left.mas_equalTo(commentCell.contentView).with.offset(padding);
 //                make.right.mas_equalTo(commentCell.contentView).with.offset(-2);
@@ -162,7 +168,13 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
     }
 }
 
-- (void)sortCommentsDict:(NSMutableDictionary *)commentsDict completionHandler:(void(^)(NSArray *sortedComments))completionHandler{
+/**
+ *  根据服务器请求返回的commentsDict（其中comment id为key，HNComment为value），在内存中进行排序
+ *
+ *  @param commentsDict      comments字典
+ *  @param completionHandler 将排好序的HNComment数组传给回调
+ */
+- (void)sortCommentsDict:(NSMutableDictionary *)commentsDict completionHandler:(void(^)(NSArray *sortedComments))completionHandler {
     NSArray *topComments = _story.comments;
         
     __block NSMutableArray *array = [NSMutableArray new];
@@ -174,6 +186,13 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
     completionHandler(array);
 }
 
+/**
+ *  递归方法，按照当前层级的comments数组顺序进行排序
+ *
+ *  @param commentArray 当前层级的comments数组
+ *  @param array        保存到的数组，递归方法中一级一级传递
+ *  @param commentsDict comments字典，包含已请求的HNComment数据，可以根据key直接取值
+ */
 - (void)saveSortedCommentByCommentArray:(NSArray *)commentArray toArray:(NSMutableArray *)array commentDict:(NSMutableDictionary *)commentsDict {
     
     for (NSNumber *commentId in commentArray) {
@@ -187,12 +206,21 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
     }
 }
 
+/**
+ *  根据story id取得HNStory实体
+ *
+ *  @param storyId           要请求的story id
+ *  @param completionHandler 请求返回的HNStory实体传给回调
+ */
 - (void)getStoryById:(NSUInteger)storyId completionHandler:(void(^)(HNStory *story))completionHandler {
     [_loadController loadStoryById:storyId completionHandler:^(HNStory *story) {
         completionHandler(story);
     }];
 }
 
+/**
+ *  第一个Cell中的Source按钮被点击
+ */
 - (void)storySourceButtonPressed {
     HNStoryDetailViewController *storyDetailVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"StoryDetailViewController"];
     
@@ -201,6 +229,11 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
     [self.navigationController pushViewController:storyDetailVC animated:YES];
 }
 
+/**
+ *  Cell中作者按钮被点击
+ *
+ *  @param notification 通过notification中的userInfo传值<code>userId</code>
+ */
 - (void)authorButtonPressed:(NSNotification *)notification {
     HNUserInfoViewController *userInfoVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"UserInfoViewController"];
     
@@ -209,6 +242,9 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
     [self.navigationController pushViewController:userInfoVC animated:YES];
 }
 
+/**
+ *  更新comment数据，强制刷新当前tableview，不使用缓存，如果请求返回的数据和缓存中的不一致，则更新缓存
+ */
 - (void)refreshData {
     NSArray *cachedComments = [_localDataController getCommentsByStoryId:_story.storyId];
     

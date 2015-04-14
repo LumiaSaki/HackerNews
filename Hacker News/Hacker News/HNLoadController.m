@@ -19,6 +19,12 @@ static NSUInteger count = 0;
 
 @implementation HNLoadController
 
+# pragma mark - Public Methods
+/**
+ *  单例方法
+ *
+ *  @return loadController单例
+ */
 + (instancetype)sharedLoadController {
     static dispatch_once_t token;
     static HNLoadController *loadController;
@@ -30,6 +36,14 @@ static NSUInteger count = 0;
     return loadController;
 }
 
+/**
+ *  根据Id数组，从服务器请求部分Story
+ *
+ *  @param storiesIdArray    要请求的Story数组，该数组中的值是story id
+ *  @param fromIndex         从Id数组中读取story的起始下标
+ *  @param toIndex           从Id数组中读取story的终止下标
+ *  @param completionHandler 将所有story请求回来的story放进数组，传给回调
+ */
 - (void)loadStoriesByIdArray:(NSArray *)storiesIdArray fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex completionHandler:(void (^)(NSArray *stories))completionHandler {
     if (storiesIdArray != nil) {
         NSMutableArray *storiesArray = [NSMutableArray new];
@@ -64,7 +78,15 @@ static NSUInteger count = 0;
         completionHandler(nil);
     }
 }
-//TODO:to be finished.
+
+/**
+ *  根据Item Id数组，从服务器请求部分item，此方法Type不分Story或Comment
+ *
+ *  @param itemIdArray       要请求的item数组，该数组中值是item id
+ *  @param fromIndex         从Id数组中读取item的起始下标
+ *  @param toIndex           从Id数组中读取item的终止下标
+ *  @param completionHandler 将所有请求回来的item放进数组，传给回调
+ */
 - (void)loadStoryOrCommentByItemIdArray:(NSArray *)itemIdArray fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex completionHandler:(void (^)(NSMutableArray *))completionHandler {
     NSMutableArray *itemArray = [NSMutableArray new];
     
@@ -114,6 +136,13 @@ static NSUInteger count = 0;
     }
 }
 
+/**
+ *  请求部分Top Story实体，此方法使用了封装好的loadStoriesByIdArray:fromIndex:toIndex:completionHandler:
+ *
+ *  @param fromIndex         请求Top Story的起始下标
+ *  @param toIndex           请求Top Story的终止下标
+ *  @param completionHandler 将请求返回的数据包装成NSArray<HNStory>数组传给回调
+ */
 - (void)loadTopStoriesFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex completionHandler:(void (^)(NSArray *))completionHandler {
     NSURL *url = [NSURL URLWithString:TOP_STORIES_URL];
     
@@ -136,6 +165,12 @@ static NSUInteger count = 0;
     }];
 }
 
+/**
+ *  请求一个story
+ *
+ *  @param storyId           要请求的story id
+ *  @param completionHandler 将请求返回的数据反序列化为HNStory传给回调
+ */
 - (void)loadStoryById:(NSUInteger)storyId completionHandler:(void (^)(HNStory *))completionHandler {
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%lu%@", ITEM_URL_PREFIX, (unsigned long)storyId, URL_SUFFIX]];
     
@@ -158,6 +193,12 @@ static NSUInteger count = 0;
     }];
 }
 
+/**
+ *  请求一个user
+ *
+ *  @param userId            要请求的user id
+ *  @param completionHandler 将请求返回的数据反序列化为HNUser传给回调
+ */
 - (void)loadUserById:(NSString *)userId completionHandler:(void (^)(HNUser *))completionHandler {
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",USER_URL_PREFIX,userId,URL_SUFFIX]];
     
@@ -180,6 +221,12 @@ static NSUInteger count = 0;
     }];
 }
 
+/**
+ *  请求同一个story id下的所有comment
+ *
+ *  @param storyId           要请求的story id
+ *  @param completionHandler 将返回的数据反序列化为NSMutableDictionary<comment.id, HNComment>
+ */
 - (void)loadAllCommentsUnderStoryId:(NSUInteger)storyId completionHandler:(void (^)(NSMutableDictionary *))completionHandler {
     [self loadStoryById:storyId completionHandler:^(HNStory *story) {
         NSMutableDictionary *comments = [NSMutableDictionary new];
@@ -192,6 +239,12 @@ static NSUInteger count = 0;
 
 #pragma mark - Private methods
 
+/**
+ *  根据url请求网络资源
+ *
+ *  @param url               要请求的url
+ *  @param completionHandler 将远端服务器返回的应答数据（NSData）传给回调
+ */
 - (void)dataFromURL:(NSURL *)url completionHandler:(void (^)(NSData *data))completionHandler {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     
@@ -211,6 +264,13 @@ static NSUInteger count = 0;
     [dataTask resume];
 }
 
+/**
+ *  读取一条comment
+ *
+ *  @param commentId         要请求的comment id
+ *  @param underStoryId      comment所属哪一个story id下
+ *  @param completionHandler 将请求返回的数据反序列化为HNComment，传给回调
+ */
 - (void)loadCommentById:(NSUInteger)commentId underStoryId:(NSUInteger)underStoryId completionHandler:(void(^)(HNComment *comment))completionHandler {
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%lu%@",ITEM_URL_PREFIX,(unsigned long)commentId,URL_SUFFIX]];
     
@@ -235,6 +295,15 @@ static NSUInteger count = 0;
     }];
 }
 
+/**
+ *  根据一个comment id数组，递归请求所有该comment id数组下所有的comment，包括comment's comment
+ *
+ *  @param commentsIdArray   要请求的comment id数组
+ *  @param dict              以comment id为key，comment为value的字典，用于存储多个HNComment实体，该处作为参数是用于将该字典递归传递下去
+ *  @param depth             记录当前comment在递归中的层级，用以标示回复的层级关系
+ *  @param underStoryId      标示在是在哪一个story id下的comment
+ *  @param completionHandler 将请求返回的包含所有comment数据的dict传递给回调
+ */
 - (void)loadCommentsFromCommentsIdArray:(NSArray *)commentsIdArray toDict:(NSMutableDictionary *)dict depth:(NSUInteger)depth underStoryId:(NSUInteger)underStoryId completionHandler:(void(^)(NSMutableDictionary *commentsDict))completionHandler {
     
     for (NSNumber *commentId in commentsIdArray) {
@@ -254,7 +323,7 @@ static NSUInteger count = 0;
                 if (count == 0) {
                     completionHandler(dict);
                 }
-            }];
+        }];
     }
 }
 

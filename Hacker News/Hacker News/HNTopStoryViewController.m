@@ -28,47 +28,26 @@ static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+
     _topStories = [NSMutableArray new];
     
-    _refreshControl = [[UIRefreshControl alloc] init];
+    _refreshControl = [UIRefreshControl new];
+    
     [_refreshControl addTarget:self action:@selector(refreshData) forControlEvents:UIControlEventValueChanged];
     [_topStoriesTableView addSubview:_refreshControl];
     
     [_topStoriesTableView registerNib:[UINib nibWithNibName:@"HNTopStoryTableViewCell" bundle:nil] forCellReuseIdentifier:TOP_STORY_CELL_IDENTIFIER];
     
+    //记录当前读取的top story在数组中的下标
     _currentTopStoryIndex = 0;
     
     [_refreshControl beginRefreshing];
     
+    //视图装载完毕后强制刷新
     [self refreshData];
-//    _loadController = [HNLoadController sharedLoadController];
-    
-//    [self refreshData];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-- (void)loadMore:(NSUInteger)moreStoriesCount {
-    //从网络读取
-    if (_loadController == nil) {
-        _loadController = [HNLoadController sharedLoadController];
-    }
-    [_loadController loadTopStoriesFromIndex:_currentTopStoryIndex toIndex:_currentTopStoryIndex + moreStoriesCount - 1 completionHandler:^(NSArray *topStories) {
-        [_topStories addObjectsFromArray:topStories];
-        
-        _currentTopStoryIndex += moreStoriesCount;
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [_topStoriesTableView reloadData];
-        });
-    }];
-    
-    //从本地读取
-}
+# pragma mark - Table View Delegate & Data Source Methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
@@ -108,15 +87,24 @@ static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
     HNCommentViewController *commentVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentViewController"];
     
     commentVC.story = story;
-//    commentVC.storyId = story.storyId;
     
     [self.navigationController pushViewController:commentVC animated:YES];
 }
 
+# pragma mark - Loading Data Methods
+
+/**
+ *  刷新数据，对<code>refreshDataByCount:</code>的包装，指定刷新十个
+ */
 - (void)refreshData {
     [self refreshDataByCount:10];
 }
 
+/**
+ *  下拉刷新时，从服务器重新请求top story信息，请求数量为<code>storiesCount</code>个
+ *
+ *  @param storiesCount 请求的数量
+ */
 - (void)refreshDataByCount:(NSUInteger)storiesCount {
     _currentTopStoryIndex = 0;
     
@@ -135,6 +123,25 @@ static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
     }];
 }
 
+/**
+ *  上拉读取更多，再读取<code>moreStoriesCount</code>个top store
+ *
+ *  @param moreStoriesCount 要再多读取的个数
+ */
+- (void)loadMore:(NSUInteger)moreStoriesCount {
+    if (_loadController == nil) {
+        _loadController = [HNLoadController sharedLoadController];
+    }
+    [_loadController loadTopStoriesFromIndex:_currentTopStoryIndex toIndex:_currentTopStoryIndex + moreStoriesCount - 1 completionHandler:^(NSArray *topStories) {
+        [_topStories addObjectsFromArray:topStories];
+        
+        _currentTopStoryIndex += moreStoriesCount;
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_topStoriesTableView reloadData];
+        });
+    }];
+}
 
 
 @end

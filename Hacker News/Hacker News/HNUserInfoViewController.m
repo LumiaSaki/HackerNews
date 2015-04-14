@@ -22,10 +22,9 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
 @property (weak, nonatomic) IBOutlet UITableView *submittedTableView;
 
 @property (nonatomic, strong) HNLoadController *loadController;
+@property (nonatomic, strong) HNUser *user;
 @property (nonatomic, strong) NSMutableArray *submittedStoriesAndComments;
 @property (nonatomic) NSUInteger currentItemIndex;
-@property (nonatomic, strong) HNUser *user;
-
 
 @end
 
@@ -33,7 +32,7 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+
     _currentItemIndex = 0;
     
     _userIdLabel.text = _userId;
@@ -79,6 +78,12 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
     // Dispose of any resources that can be recreated.
 }
 
+/**
+ *  根据submitted数组，读取更多的<code>moreCount</code>个item
+ *
+ *  @param moreCount      读取更多的个数
+ *  @param submittedArray 当前HNUser的Submitted数组
+ */
 - (void)loadMore:(NSUInteger)moreCount submittedArray:(NSArray *)submittedArray {
     if (_loadController == nil) {
         _loadController = [HNLoadController sharedLoadController];
@@ -108,6 +113,8 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
     }
 }
 
+# pragma mark - Table View Delegate & Data Source Methods
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
@@ -128,6 +135,7 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
     
         HNStory *story = _submittedStoriesAndComments[indexPath.row];
         
+        //story被删掉的情况
         if (story.title == nil) {
             submittedStoryCell.authorLabel.text = @"[deleted]";
             submittedStoryCell.titleLabel.text = @"[deleted]";
@@ -148,6 +156,7 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
         
         HNComment *comment = _submittedStoriesAndComments[indexPath.row];
         
+        //comment被删掉的情况
         if (comment.contentText == nil) {
             [commentCell.authorButton setTitle:@"[deleted]" forState:UIControlStateNormal];
             commentCell.commentLabel.text = @"[deleted]";
