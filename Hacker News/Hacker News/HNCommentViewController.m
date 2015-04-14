@@ -132,7 +132,7 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
         HNCommentStoryCell *storyCommentCell = [tableView dequeueReusableCellWithIdentifier:COMMENT_STORY_IDENTIFIER forIndexPath:indexPath];
         
         storyCommentCell.storyTitleLabel.text = story.title;
-        [storyCommentCell.storyAuthorButton setTitle:[NSString stringWithFormat:@"%@",story.author] forState:UIControlStateNormal];
+        [storyCommentCell.storyAuthorButton setTitle:[NSString stringWithFormat:@"author by: %@",story.author] forState:UIControlStateNormal];
         
         return storyCommentCell;
         
@@ -153,7 +153,7 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
         NSUInteger padding = (comment.depth + 1) * 20;
         
         //通过修改约束更改缩进
-        [commentCell.commentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        [commentCell.commentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
             make.left.mas_equalTo(commentCell.contentView).with.offset(padding);
             //                make.right.mas_equalTo(commentCell.contentView).with.offset(-2);
             //                make.bottom.mas_equalTo(commentCell.contentView).with.offset(-8);

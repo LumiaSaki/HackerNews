@@ -67,7 +67,7 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
             _karmaLabel.text = [NSString stringWithFormat:@"karma: %lu", (unsigned long)user.karma];
             _delayLabel.text = [NSString stringWithFormat:@"delay: %lu", (unsigned long)user.delay];
             
-            [self loadMore:5 submittedArray:user.submitted];
+            [self loadMore:10 submittedArray:user.submitted];
             
         });
     }];
@@ -127,7 +127,7 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
     if (indexPath.row == [_submittedStoriesAndComments count] - 1) {
         [_indicator startAnimating];
         
-        [self loadMore:5 submittedArray:_user.submitted];
+        [self loadMore:10 submittedArray:_user.submitted];
     }
     
     if ([_submittedStoriesAndComments[indexPath.row] isKindOfClass:[HNStory class]]) {
@@ -166,7 +166,7 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
         }
         commentCell.authorButton.userInteractionEnabled = NO;
         
-        [commentCell.commentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        [commentCell.commentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(commentCell.contentView).with.offset(15);
         }];
         

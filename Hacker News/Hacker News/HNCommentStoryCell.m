@@ -24,7 +24,9 @@
 }
 
 - (IBAction)authorButtonPressed:(id)sender {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"StoryAuthorButtonPressed" object:self userInfo:@{@"userId" : _storyAuthorButton.titleLabel.text}];
+    NSString *authorName = [[[_storyAuthorButton.titleLabel.text componentsSeparatedByString:@":"] lastObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"StoryAuthorButtonPressed" object:self userInfo:@{@"userId" : authorName}];
 }
 
 @end
