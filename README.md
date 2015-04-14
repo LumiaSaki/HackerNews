@@ -1,3 +1,3 @@
 # HackerNews
 
-A Hacker News ios client.
+A Hacker News iOS client.
