@@ -183,7 +183,9 @@ static NSString *SUBMITTED_COMMENT_CELL_IDENTIFIER = @"SubmittedCommentCell";
         HNCommentViewController *commentVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"CommentViewController"];
         
         commentVC.story = story;
-    
+
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        
         [self.navigationController pushViewController:commentVC animated:YES];
     }
 }

@@ -16,6 +16,7 @@ static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
 @interface HNTopStoryViewController ()
 
 @property (weak, nonatomic) IBOutlet UITableView *topStoriesTableView;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *indicator;
 
 @property (nonatomic, strong) HNLoadController *loadController;
 @property (nonatomic, strong) NSMutableArray *topStories;
@@ -89,6 +90,8 @@ static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
     commentVC.story = story;
     
     [self.navigationController pushViewController:commentVC animated:YES];
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 # pragma mark - Loading Data Methods
@@ -132,12 +135,16 @@ static NSString *TOP_STORY_CELL_IDENTIFIER = @"TopStory";
     if (_loadController == nil) {
         _loadController = [HNLoadController sharedLoadController];
     }
+    [_indicator startAnimating];
+    
     [_loadController loadTopStoriesFromIndex:_currentTopStoryIndex toIndex:_currentTopStoryIndex + moreStoriesCount - 1 completionHandler:^(NSArray *topStories) {
         [_topStories addObjectsFromArray:topStories];
         
         _currentTopStoryIndex += moreStoriesCount;
         
         dispatch_async(dispatch_get_main_queue(), ^{
+            [_indicator stopAnimating];
+            
             [_topStoriesTableView reloadData];
         });
     }];

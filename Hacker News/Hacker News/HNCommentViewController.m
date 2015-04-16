@@ -80,12 +80,6 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
             if ([cachedComments count] != [sortedComments count] - 1) {
                 [_localDataController deleteCommentsByStoryId:_story.storyId];
                 
-                for (id object in sortedComments) {
-                    if ([object isKindOfClass:[HNComment class]]) {
-                        [_localDataController insertComment:object];
-                    }
-                }
-                
                 //第一次进入时，本地无缓存，将排好序的comment赋值给_comments用以刷新tableview
                 if ([cachedComments count] == 0) {
                     _comments = sortedComments;
@@ -95,6 +89,12 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
                         
                         [_commentTableView reloadData];
                     });
+                }
+                
+                for (id object in sortedComments) {
+                    if ([object isKindOfClass:[HNComment class]]) {
+                        [_localDataController insertComment:object];
+                    }
                 }
             }
         }];
@@ -132,7 +132,7 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
         HNCommentStoryCell *storyCommentCell = [tableView dequeueReusableCellWithIdentifier:COMMENT_STORY_IDENTIFIER forIndexPath:indexPath];
         
         storyCommentCell.storyTitleLabel.text = story.title;
-        [storyCommentCell.storyAuthorButton setTitle:[NSString stringWithFormat:@"author by: %@",story.author] forState:UIControlStateNormal];
+        [storyCommentCell.storyAuthorButton setTitle:[NSString stringWithFormat:@"composed by: %@",story.author] forState:UIControlStateNormal];
         
         return storyCommentCell;
         
@@ -252,16 +252,6 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
     [_loadController loadAllCommentsUnderStoryId:_story.storyId completionHandler:^(NSMutableDictionary *commentsDict) {
         [self sortCommentsDict:commentsDict completionHandler:^(NSArray *sortedComments) {
             
-            if ([cachedComments count] != [sortedComments count] - 1) {
-                [_localDataController deleteCommentsByStoryId:_story.storyId];
-                
-                for (id object in sortedComments) {
-                    if ([object isKindOfClass:[HNComment class]]) {
-                        [_localDataController insertComment:object];
-                    }
-                }
-                
-            }
             _comments = sortedComments;
             
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -269,7 +259,16 @@ static NSString *COMMENT_STORY_IDENTIFIER = @"CommentStoryCell";
                 
                 [_refreshController endRefreshing];
             });
-
+            
+            if ([cachedComments count] != [sortedComments count] - 1) {
+                [_localDataController deleteCommentsByStoryId:_story.storyId];
+                
+                for (id object in sortedComments) {
+                    if ([object isKindOfClass:[HNComment class]]) {
+                        [_localDataController insertComment:object];
+                    }
+                }                
+            }
         }];
     }];
 }

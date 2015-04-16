@@ -133,9 +133,10 @@
         while ([resultSet next]) {
             NSMutableDictionary *objectInfoDict = [NSMutableDictionary new];
             for (int i = 0;i < attr.count; i++) {
-                id object=[resultSet objectForColumnName: attr[i]];
-                
-                [objectInfoDict setObject:object forKey:attr[i]];
+                id object = [resultSet objectForColumnName: attr[i]];
+                if (object != nil) {
+                    [objectInfoDict setObject:object forKey:attr[i]];
+                }
             }
             [allData addObject:objectInfoDict];
         }
